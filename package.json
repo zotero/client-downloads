@@ -1,0 +1,22 @@
+{
+  "name": "zotero-client-downloads",
+  "version": "1.0.0",
+  "description": "",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "test/run_tests"
+  },
+  "author": "",
+  "license": "AGPL-3.0",
+  "devDependencies": {
+    "bluebird": "^3.5.0",
+    "chai": "^4.0.2",
+    "mocha": "^3.4.2",
+    "request": "^2.81.0",
+    "request-promise": "^4.2.1",
+    "xml2js": "^0.4.17"
+  }
+}
