@@ -1,0 +1,6 @@
+Options MultiViews FollowSymLinks
+
+# Return 404 for all other files
+RewriteEngine on
+RewriteCond %{REQUEST_FILENAME} !(dl.php|update.php)
+RewriteRule .* - [L,R=404]

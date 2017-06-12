@@ -1,5 +1,5 @@
 <?php
-require(__DIR__ . '/../lib/bootstrap.inc.php');
+require(__DIR__ . '/lib/bootstrap.inc.php');
 
 if (!array_key_exists("PATH_INFO", $_SERVER)) {
 	header("HTTP/1.0 400 Bad Request");

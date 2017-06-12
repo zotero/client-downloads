@@ -1,5 +1,5 @@
 <?php
-require(__DIR__ . '/../lib/bootstrap.inc.php');
+require(__DIR__ . '/lib/bootstrap.inc.php');
 
 if (empty($_GET['platform'])) {
 	http_response_code(400);
