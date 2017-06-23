@@ -13,13 +13,22 @@ $cv = new \Zotero\ClientDownloads([
 $platform = $_GET['platform'];
 $channel = !empty($_GET['channel']) ? $_GET['channel'] : 'release';
 $from = !empty($_GET['from']) ? $_GET['from'] : null;
+$version = !empty($_GET['version']) ? $_GET['version'] : null;
 
-$build = $cv->getBuildOverride($platform, $from);
-if ($build) {
-	$version = $build['version'];
+if ($version) {
+	if (!preg_match('/\d\.\d(\.\d)?(\.\d)?/', $version)) {
+		http_response_code(400);
+		exit;
+	}
 }
-if (!isset($version)) {
-	$version = $cv->getBuildVersion($channel, $platform);
+else {
+	$build = $cv->getBuildOverride($platform, $from);
+	if ($build) {
+		$version = $build['version'];
+	}
+	if (!isset($version)) {
+		$version = $cv->getBuildVersion($channel, $platform);
+	}
 }
 
 if (!$version) {
