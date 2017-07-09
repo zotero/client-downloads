@@ -359,7 +359,7 @@ class ClientDownloads {
 					'patches' => [
 						[
 							'type' => 'complete',
-							'URL' => 'https://zotero.org/download/standalone/4.0.28.8-mac-update-failure',
+							'URL' => 'https://www.zotero.org/download/client/4.0.28.8-mac-update-failure',
 							'hashFunction' => 'SHA512',
 							'hashValue' => '3a777d6df7c87a496643d1a24261b2bce65a2cea16e9fff1ab7f9dfdb5c752af537783e49d6f14be818f06c9bc92debc6d0e3efa539ff0ff15ec9421a26e8e7b',
 							'size' => 44520206
@@ -432,20 +432,10 @@ class ClientDownloads {
 	}
 	
 	
-	/**
-	 * For non-release channels, use a subdirectory on S3 and when getting version info
-	 */
-	public function getDownloadSubdir($channel) {
-		return $channel == 'release' ? "" : "$channel/";
-	}
-	
-	
 	private function getBaseURI($channel, $version) {
-		$subdir = $this->getDownloadSubdir($channel);
-		
 		if (empty($this->host)) {
 			throw new \Exception("Host is not set");
 		}
-		return $this->host . "/standalone/$subdir" . urlencode($version) . "/";
+		return $this->host . "/client/$channel/" . urlencode($version) . "/";
 	}
 }

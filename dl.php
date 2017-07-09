@@ -15,6 +15,16 @@ $channel = !empty($_GET['channel']) ? $_GET['channel'] : 'release';
 $from = !empty($_GET['from']) ? $_GET['from'] : null;
 $version = !empty($_GET['version']) ? $_GET['version'] : null;
 
+switch ($channel) {
+case 'release':
+case 'beta':
+case 'dev':
+	break;
+default:
+	http_response_code(400);
+	exit;
+}
+
 if ($version) {
 	if (!preg_match('/\d\.\d(\.\d)?(\.\d)?/', $version)) {
 		http_response_code(400);
@@ -61,8 +71,7 @@ if (!empty($_GET['fn'])) {
 	exit;
 }
 
-$subdir = $cv->getDownloadSubdir($channel);
 $version = urlencode($version);
 $filename = urlencode($filename);
 
-header("Location: $HOST/standalone/{$subdir}$version/$filename");
+header("Location: $HOST/client/$channel/$version/$filename");

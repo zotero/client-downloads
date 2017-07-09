@@ -4,7 +4,7 @@ set -euo pipefail
 dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 root_dir="$dir/.."
 port=12562
-doc_root="$root_dir/htdocs"
+doc_root="$root_dir"
 
 tmp_dir=$(mktemp -d)
 function finish {

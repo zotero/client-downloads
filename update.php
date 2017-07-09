@@ -12,7 +12,7 @@ if(count($pathParts) < 7) {
 	return;
 }
 
-// GET /download/standalone/update/4.0.29.15/20161003133106/Darwin_x86_64-gcc3-u-i386-x86_64/en-US/release/Darwin%2016.6.0/update.xml
+// GET /download/client/update/4.0.29.15/20161003133106/Darwin_x86_64-gcc3-u-i386-x86_64/en-US/release/Darwin%2016.6.0/update.xml
 $clientInfo = [
 	'version' => $pathParts[1],
 	'buildID' => $pathParts[2],
