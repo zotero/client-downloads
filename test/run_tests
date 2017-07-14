@@ -20,4 +20,4 @@ cd $root_dir
 nohup php -S localhost:$port -t $doc_root > test_server.log 2>&1 &
 echo $! > $tmp_dir/server.pid
 
-node_modules/.bin/mocha $*
+node_modules/.bin/mocha "$@"
