@@ -32,7 +32,7 @@ if ($version) {
 	}
 }
 else {
-	$build = $cv->getBuildOverride($platform, $from);
+	$build = $cv->getBuildOverride($platform, $from, false);
 	if ($build) {
 		$version = $build['version'];
 	}

@@ -46,7 +46,7 @@ class ClientDownloads {
 		}
 		
 		// Check for a specific build for this version
-		$buildOverride = $this->getBuildOverride($os, $fromVersion);
+		$buildOverride = $this->getBuildOverride($os, $fromVersion, $clientInfo['manual']);
 		if ($buildOverride) {
 			$build = $buildOverride;
 		}
@@ -65,7 +65,7 @@ class ClientDownloads {
 		}
 		
 		// Check for a hard-coded upgrade for this version
-		$updateOverride = $this->getUpdateOverride($os, $fromVersion);
+		$updateOverride = $this->getUpdateDataOverride($os, $fromVersion);
 		if ($updateOverride) {
 			$updates[] = $updateOverride;
 			return $updates;
@@ -198,8 +198,8 @@ class ClientDownloads {
 	/**
 	 * Return a specific build for some versions
 	 */
-	public function getBuildOverride($os, $fromVersion) {
-		if (strpos($fromVersion, '4.0') === 0) {
+	public function getBuildOverride($os, $fromVersion, $manual) {
+		if (strpos($fromVersion, '4.0') === 0 && !$manual) {
 			switch ($os) {
 			case 'mac':
 				return [
@@ -248,7 +248,7 @@ class ClientDownloads {
 	 * Unlike getBuildOverride(), which specifies a version to use the existing update data from,
 	 * this specifies the exact update data to use.
 	 */
-	private function getUpdateOverride($os, $fromVersion) {
+	private function getUpdateDataOverride($os, $fromVersion) {
 		// Check for fixed updates
 		if ($os == 'mac') {
 			// Don't show updates past 4.0.29.11 for 10.6-10.8 users

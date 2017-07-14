@@ -20,6 +20,7 @@ $clientInfo = [
 	'locale' => $pathParts[4],
 	'channel' => $pathParts[5],
 	'osVersion' => $pathParts[6],
+	'manual' => !empty($_GET['force'])
 ];
 
 $cv = new \Zotero\ClientDownloads([
