@@ -1,2 +1,4 @@
 <?php
 $HOST = 'https://download.zotero.org';
+$STATSD_HOST = '';
+$STATSD_PORT = 8125;

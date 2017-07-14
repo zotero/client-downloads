@@ -1,5 +1,5 @@
 <?php
-require(__DIR__ . '/lib/bootstrap.inc.php');
+require __DIR__ . '/lib/bootstrap.inc.php';
 
 if (empty($_GET['platform'])) {
 	http_response_code(400);
@@ -58,7 +58,6 @@ case 'linux-x86_64':
 
 case 'win32':
 	$filename = "Zotero-{$version}_setup.exe";
-	//$filename = "Zotero-{$version}_$platform.zip"
 	break;
 
 default:
@@ -74,4 +73,5 @@ if (!empty($_GET['fn'])) {
 $version = urlencode($version);
 $filename = urlencode($filename);
 
+$statsd->increment("downloads.client.$channel.$platform");
 header("Location: $HOST/client/$channel/$version/$filename");
