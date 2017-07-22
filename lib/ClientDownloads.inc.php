@@ -274,31 +274,7 @@ class ClientDownloads {
 			}
 			
 			switch ($fromVersion) {
-			case '4.0.9':
-				return [
-					'type' => 'minor',
-					'version' => '4.0.11',
-					'buildID' => '20130808',
-					'detailsURL' => 'http://www.zotero.org/support/4.0_changelog',
-					'patches' => [
-						[
-							'type' => 'partial',
-							'URL' => $this->getBaseURI('release', '4.0.11') . 'Zotero-4.0.11-4.0.9_mac.mar',
-							'hashFunction' => 'SHA512',
-							'hashValue' => 'e411236d5b46f74ec511a3fa4883ec44488f01dd6b5562d5b904273815e35cae06f1804d0412dda39fd042047ab708132dd8efd172b09c59343bd2ac7215ab83',
-							'size' => 14602922
-						],
-						[
-							'type' => 'complete',
-							'URL' => $this->getBaseURI('release', '4.0.11') . 'Zotero-4.0.11-full_mac.mar',
-							'hashFunction' => 'SHA512',
-							'hashValue' => '3a777d6df7c87a496643d1a24261b2bce65a2cea16e9fff1ab7f9dfdb5c752af537783e49d6f14be818f06c9bc92debc6d0e3efa539ff0ff15ec9421a26e8e7b',
-							'size' => 44520206
-						]
-					]
-				];
-			
-			case '4.0.10':
+			/*case '4.0.10':
 				return [
 					'type' => 'minor',
 					'version' => '4.0.11',
@@ -321,37 +297,13 @@ class ClientDownloads {
 						]
 					]
 				];
-				break;
-			
-			case '4.0.10.1':
-				return [
-					'type' => 'minor',
-					'version' => '4.0.11',
-					'buildID' => '20130808',
-					'detailsURL' => 'http://www.zotero.org/support/4.0_changelog',
-					'patches' => [
-						[
-							'type' => 'partial',
-							'URL' => $this->getBaseURI('release', '4.0.11') . 'Zotero-4.0.11-4.0.10.1_mac.mar',
-							'hashFunction' => 'SHA512',
-							'hashValue' => 'b54c3cfc6c71b58a4e26d11fe9f68c10a0f213af2cfec5d75b17b3d4ce18aca85762c907057c32aeea59adaab82b826d59598b33ec620586d7d7bf67a64da472',
-							'size' => 63037
-						],
-						[
-							'type' => 'complete',
-							'URL' => $this->getBaseURI('release', '4.0.11') . 'Zotero-4.0.11-full_mac.mar',
-							'hashFunction' => 'SHA512',
-							'hashValue' => '3a777d6df7c87a496643d1a24261b2bce65a2cea16e9fff1ab7f9dfdb5c752af537783e49d6f14be818f06c9bc92debc6d0e3efa539ff0ff15ec9421a26e8e7b',
-							'size' => 44520206
-						]
-					]
-				];
+				break;*/
 			
 			case '4.0.28.6':
 			case '4.0.28.7':
 				return [
 					'type' => 'minor',
-					'version' => '4.0.28.8 – You will need to download this update from zotero.org/download',
+					'version' => 'You will need to download this update from zotero.org/download',
 					'buildID' => '20151003',
 					'detailsURL' => 'http://www.zotero.org/support/4.0_changelog',
 					'showPrompt' => 'true',
