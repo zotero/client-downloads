@@ -60,6 +60,10 @@ case 'win32':
 	$filename = "Zotero-{$version}_setup.exe";
 	break;
 
+case 'win32-zip':
+	$filename = "Zotero-{$version}_win32.zip";
+	break;
+
 default:
 	http_response_code(400);
 	exit;
