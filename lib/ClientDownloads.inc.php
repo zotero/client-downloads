@@ -199,7 +199,7 @@ class ClientDownloads {
 	 * Return a specific build for some versions
 	 */
 	public function getBuildOverride($os, $fromVersion, $manual) {
-		if (strpos($fromVersion, '4.0') === 0 && !$manual) {
+		/*if (strpos($fromVersion, '4.0') === 0 && !$manual) {
 			switch ($os) {
 			case 'mac':
 				return [
@@ -237,7 +237,7 @@ class ClientDownloads {
 				];
 				break;
 			}
-		}
+		}*/
 		return false;
 	}
 	
@@ -274,31 +274,6 @@ class ClientDownloads {
 			}
 			
 			switch ($fromVersion) {
-			/*case '4.0.10':
-				return [
-					'type' => 'minor',
-					'version' => '4.0.11',
-					'buildID' => '20130808',
-					'detailsURL' => 'http://www.zotero.org/support/4.0_changelog',
-					'patches' => [
-						[
-							'type' => 'partial',
-							'URL' => $this->getBaseURI('release', '4.0.11') . 'Zotero-4.0.11-4.0.10_mac.mar',
-							'hashFunction' => 'SHA512',
-							'hashValue' => 'cf38108d8282f39e24012adcfab7c3e6c5ddbbf18a8dab7cb4f5177ca09c6fba5e2df4dbaec95d2040aed94e9a625e075ecc6789600cf5ef5bc9390e87ffc0b9',
-							'size' => 110460
-						],
-						[
-							'type' => 'complete',
-							'URL' => $this->getBaseURI('release', '4.0.11') . 'Zotero-4.0.11-full_mac.mar',
-							'hashFunction' => 'SHA512',
-							'hashValue' => '3a777d6df7c87a496643d1a24261b2bce65a2cea16e9fff1ab7f9dfdb5c752af537783e49d6f14be818f06c9bc92debc6d0e3efa539ff0ff15ec9421a26e8e7b',
-							'size' => 44520206
-						]
-					]
-				];
-				break;*/
-			
 			case '4.0.28.6':
 			case '4.0.28.7':
 				return [

@@ -32,11 +32,11 @@ describe("dl.php", function () {
 			assert.match(result, /client\/release\/5\.0\.[\d]+\/Zotero-5.0\.[\d]+\.dmg$/);
 		});
 		
-		it("should offer 4.0 for Mac with from=4.0", async function () {
+		it("should offer 5.0 for Mac with from=4.0", async function () {
 			var result = await req(
 				url + '?channel=release&platform=mac&from=4.0'
 			);
-			assert.match(result, /client\/release\/4\.0\.29\.15\/Zotero-4.0.29.15.dmg/);
+			assert.match(result, /client\/release\/5\.0\.[\d]+\/Zotero-5.0\.[\d]+\.dmg$/);
 		});
 		
 		it("should offer 5.0 for Windows by default", async function () {
@@ -46,11 +46,11 @@ describe("dl.php", function () {
 			assert.match(result, /client\/release\/5\.0\.[\d]+\/Zotero-5.0\.[\d]+_setup.exe$/);
 		});
 		
-		it("should offer 4.0 for Windows with from=4.0", async function () {
+		it("should offer 5.0 for Windows with from=4.0", async function () {
 			var result = await req(
 				url + '?channel=release&platform=win32&from=4.0'
 			);
-			assert.match(result, /client\/release\/4\.0\.29\.17\/Zotero-4.0.29.17_setup.exe/);
+			assert.match(result, /client\/release\/5\.0\.[\d]+\/Zotero-5.0\.[\d]+_setup.exe$/);
 		});
 		
 		it("should offer 5.0 for Linux x86_64 by default", async function () {
@@ -60,11 +60,11 @@ describe("dl.php", function () {
 			assert.match(result, /client\/release\/5\.0\.[\d]+\/Zotero-5\.0\.[\d]+_linux-x86_64.tar.bz2$/);
 		});
 		
-		it("should offer 4.0 for Linux x86_64 with from=4.0", async function () {
+		it("should offer 5.0 for Linux x86_64 with from=4.0", async function () {
 			var result = await req(
 				url + '?channel=release&platform=linux-x86_64&from=4.0'
 			);
-			assert.match(result, /client\/release\/4\.0\.29\.10\/Zotero-4.0.29.10_linux-x86_64.tar.bz2/);
+			assert.match(result, /client\/release\/5\.0\.[\d]+\/Zotero-5\.0\.[\d]+_linux-x86_64.tar.bz2$/);
 		});
 	});
 	
