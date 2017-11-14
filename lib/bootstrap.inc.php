@@ -4,6 +4,8 @@ require ROOT_DIR . '/vendor/autoload.php';
 require ROOT_DIR . '/config.inc.php';
 require __DIR__ . '/ClientDownloads.inc.php';
 
-$statsd = new \Domnikl\Statsd\Client(
-	new \Domnikl\Statsd\Connection\UdpSocket($STATSD_HOST, $STATSD_PORT), ""
-);
+if (isset($STATSD_HOST)) {
+	$statsd = new \Domnikl\Statsd\Client(
+		new \Domnikl\Statsd\Connection\UdpSocket($STATSD_HOST, $STATSD_PORT), ""
+	);
+}

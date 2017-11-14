@@ -73,5 +73,7 @@ if (!empty($_GET['fn'])) {
 $version = urlencode($version);
 $filename = urlencode($filename);
 
-$statsd->increment("downloads.client.$channel.$platform");
+if (isset($statsd)) {
+	$statsd->increment("downloads.client.$channel.$platform");
+}
 header("Location: $HOST/client/$channel/$version/$filename");
