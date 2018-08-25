@@ -301,6 +301,9 @@ class ClientDownloads {
 	
 	
 	private function getBuilds($channel, $platform) {
+		if ($platform == 'win32-zip') {
+			$platform = 'win32';
+		}
 		if (!in_array($channel, $this->channels)) {
 			error_log("Invalid channel '$channel'");
 			return false;
