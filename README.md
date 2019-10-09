@@ -2,7 +2,7 @@
 
 Current versions and updates are specified by the following files in the 'manifests' directory:
 
-### manifests/{release,beta,dev}/updates-{mac,win32,linux-i686,linux-x86_64}.json
+### manifests/{release,beta,dev}/updates-{mac,win32,win64,linux-i686,linux-x86_64}.json
 
 ```
 [
