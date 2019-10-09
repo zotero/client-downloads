@@ -9,7 +9,8 @@ class ClientDownloads {
 	// Key is the format passed by the Mozilla update check
 	private $platforms = [
 		"Darwin" => "mac",
-		"WINNT" => "win32",
+		"WINNT_x86_64" => "win64",
+		"WINNT_x86" => "win32",
 		"Linux_x86_64" => "linux-x86_64",
 		"Linux_x86" => "linux-i686"
 	];

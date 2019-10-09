@@ -56,8 +56,23 @@ case 'linux-x86_64':
 	$filename = "Zotero-{$version}_$platform.tar.bz2";
 	break;
 
-case 'win32':
+case 'win64':
 	$filename = "Zotero-{$version}_setup.exe";
+	break;
+
+case 'win64-zip':
+	$filename = "Zotero-{$version}_win64.zip";
+	break;
+
+case 'win32':
+	// Use setup32.exe for win32 versions above 5.0.75
+	if (\ToolkitVersionComparator::compare('5.0.75', $version) < 0
+			|| ($version == '5.0.75' && $channel == 'dev')) {
+		$filename = "Zotero-{$version}_setup32.exe";
+	}
+	else {
+		$filename = "Zotero-{$version}_setup.exe";
+	}
 	break;
 
 case 'win32-zip':

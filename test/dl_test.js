@@ -66,6 +66,27 @@ describe("dl.php", function () {
 			);
 			assert.match(result, /client\/release\/5\.0\.[\d]+\/Zotero-5\.0\.[\d]+_linux-x86_64.tar.bz2$/);
 		});
+		
+		it("should offer setup.exe for win32 5.0.75", async function () {
+			var result = await req(
+				url + '?channel=release&platform=win32&version=5.0.75'
+			);
+			assert.match(result, /client\/release\/5\.0\.[\d]+\/Zotero-5\.0\.[\d]+_setup.exe$/);
+		});
+		
+		it("should offer setup32.exe for win32 5.0.76", async function () {
+			var result = await req(
+				url + '?channel=release&platform=win32&version=5.0.76'
+			);
+			assert.match(result, /client\/release\/5\.0\.[\d]+\/Zotero-5\.0\.[\d]+_setup32.exe$/);
+		});
+		
+		it.skip("should offer setup.exe for win64", async function () {
+			var result = await req(
+				url + '?channel=release&platform=win64'
+			);
+			assert.match(result, /client\/release\/5\.0\.[\d]+\/Zotero-5\.0\.[\d]+_setup.exe$/);
+		});
 	});
 	
 	describe("beta channel", function () {
