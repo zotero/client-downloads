@@ -65,8 +65,8 @@ case 'win64-zip':
 	break;
 
 case 'win32':
-	// Use setup32.exe for win32 versions above 5.0.76
-	if (\ToolkitVersionComparator::compare('5.0.76', $version) < 0
+	// Use setup32.exe for win32 versions above 5.0.77
+	if (($channel == 'release' && \ToolkitVersionComparator::compare('5.0.77', $version) < 0)
 			|| ($version == '5.0.75' && $channel == 'dev')) {
 		$filename = "Zotero-{$version}_setup32.exe";
 	}
