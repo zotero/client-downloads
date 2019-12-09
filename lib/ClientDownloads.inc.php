@@ -200,7 +200,8 @@ class ClientDownloads {
 	 * Return a specific build for some versions
 	 */
 	public function getBuildOverride($osVersion, $fromVersion, $manual) {
-		if (strpos($osVersion, "Windows_NT 5.1") === 0) {
+		if (strpos($osVersion, "Windows_NT 5.") === 0
+				|| strpos($osVersion, "Windows_NT 6.0") === 0) {
 			return [
 				"major" => !!preg_match('/^[1234]\./', $fromVersion),
 				"version" => "5.0.77",
