@@ -107,6 +107,24 @@ describe("update.php", function () {
 				assert.isAbove(vcmp('5.0', result.updates.update[0].$.appVersion), 0);
 				assert.match(result.updates.update[0].$.appVersion, /5\.0\.[\d]+/);
 			});
+			
+			it("should offer minor update to 5.0.77 for Zotero 5 on Windows XP", async function () {
+				var result = await req(
+					url + '/5.0.74/20190822031702/WINNT_x86-msvc-x86/en-US/release/Windows_NT%205.1.3.0%20(x86)/update.xml'
+				);
+				assert.lengthOf(result.updates.update, 1);
+				assert.propertyVal(result.updates.update[0].$, 'type', 'minor');
+				assert.equal(result.updates.update[0].$.appVersion, '5.0.77');
+			});
+			
+			it("should offer major update to 5.0.77 for Zotero 4 on Windows XP", async function () {
+				var result = await req(
+					url + '/4.0.74/20190822031702/WINNT_x86-msvc-x86/en-US/release/Windows_NT%205.1.3.0%20(x86)/update.xml'
+				);
+				assert.lengthOf(result.updates.update, 1);
+				assert.propertyVal(result.updates.update[0].$, 'type', 'major');
+				assert.equal(result.updates.update[0].$.appVersion, '5.0.77');
+			});
 		});
 		
 		describe("Linux", function () {

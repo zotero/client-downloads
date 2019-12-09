@@ -47,7 +47,7 @@ class ClientDownloads {
 		}
 		
 		// Check for a specific build for this version
-		$buildOverride = $this->getBuildOverride($os, $fromVersion, $clientInfo['manual']);
+		$buildOverride = $this->getBuildOverride($clientInfo['osVersion'], $fromVersion, $clientInfo['manual']);
 		if ($buildOverride) {
 			$build = $buildOverride;
 		}
@@ -80,7 +80,7 @@ class ClientDownloads {
 		
 		// Updates are minor if the first 3 characters in the version haven't changed, and
 		// if major is set to false
-		$isMinor = !strncmp($build["version"], $fromVersion, 3) || $build["major"];
+		$isMinor = !strncmp($build["version"], $fromVersion, 3) && !$build["major"];
 		$type = $isMinor ? "minor" : "major";
 		
 		// Read in hashes and files
@@ -199,7 +199,15 @@ class ClientDownloads {
 	/**
 	 * Return a specific build for some versions
 	 */
-	public function getBuildOverride($os, $fromVersion, $manual) {
+	public function getBuildOverride($osVersion, $fromVersion, $manual) {
+		if (strpos($osVersion, "Windows_NT 5.1") === 0) {
+			return [
+				"major" => !!preg_match('/^[1234]\./', $fromVersion),
+				"version" => "5.0.77",
+				"detailsURL" => "https://www.zotero.org/support/5.0_changelog",
+				"buildID" => "20191031072159"
+			];
+		}
 		/*if (strpos($fromVersion, '4.0') === 0 && !$manual) {
 			switch ($os) {
 			case 'mac':
