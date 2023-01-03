@@ -23,17 +23,17 @@ describe("update.php", function () {
 	
 	describe("release channel", function () {
 		describe("Mac", function () {
-			it("should offer major update to 5.0 for Mac 4.0.29.15", async function () {
+			it("should offer major update to 6.0 for Mac 4.0.29.15", async function () {
 				var result = await req(
-					url + '/4.0.29.14/20161003133106/Darwin_x86_64-gcc3-u-i386-x86_64/en-US/release/Darwin%2016.6.0/update.xml'
+					url + '/4.0.29.15/20161003133106/Darwin_x86_64-gcc3-u-i386-x86_64/en-US/release/Darwin%2016.6.0/update.xml'
 				);
 				assert.lengthOf(result.updates.update, 1);
 				assert.propertyVal(result.updates.update[0].$, 'type', 'major');
-				assert.isAbove(vcmp('5.0', result.updates.update[0].$.appVersion), 0);
+				assert.isAbove(vcmp('6.0', result.updates.update[0].$.appVersion), 0);
 				// Verify patches
 				assert.lengthOf(result.updates.update[0].patch, 1);
 				var complete = result.updates.update[0].patch.filter(x => x.$.type == 'complete')[0];
-				assert.match(complete.$.URL, /https:\/\/.+\/5\.0\.\d+\/Zotero-5\.0\.\d+-full_mac.mar/);
+				assert.match(complete.$.URL, /https:\/\/.+\/6\.0\.\d+\/Zotero-6\.0\.\d+-full_mac.mar/);
 			});
 			
 			/*it("shouldn't offer update for Mac 4.0.29.15 by default", async function () {
@@ -43,23 +43,23 @@ describe("update.php", function () {
 				assert.notOk(result.updates);
 			});*/
 			
-			it("should offer major update to 5.0 for Mac 4.0.29.15 with ?force=1", async function () {
+			it("should offer major update to 6.0 for Mac 4.0.29.15 with ?force=1", async function () {
 				var result = await req(
 					url + '/4.0.29.15/20161003133106/Darwin_x86_64-gcc3-u-i386-x86_64/en-US/release/Darwin%2016.6.0/update.xml?force=1'
 				);
 				assert.lengthOf(result.updates.update, 1);
 				assert.propertyVal(result.updates.update[0].$, 'type', 'major');
-				assert.isAbove(vcmp('5.0', result.updates.update[0].$.appVersion), 0);
-				assert.match(result.updates.update[0].$.appVersion, /5\.0\.[\d]+/);
+				assert.isAbove(vcmp('6.0', result.updates.update[0].$.appVersion), 0);
+				assert.match(result.updates.update[0].$.appVersion, /6\.0\.[\d]+/);
 			});
 			
-			it("should offer minor update from earlier 5.0 build", async function () {
+			it("should offer minor update from earlier 6.0 build", async function () {
 				var result = await req(
-					url + '/5.0/20171003133106/Darwin_x86_64-gcc3-u-i386-x86_64/en-US/release/Darwin%2016.6.0/update.xml'
+					url + '/6.0/20171003133106/Darwin_x86_64-gcc3-u-i386-x86_64/en-US/release/Darwin%2016.6.0/update.xml'
 				);
 				assert.lengthOf(result.updates.update, 1);
 				assert.propertyVal(result.updates.update[0].$, 'type', 'minor');
-				assert.isAbove(vcmp('5.0', result.updates.update[0].$.appVersion), 0);
+				assert.isAbove(vcmp('6.0', result.updates.update[0].$.appVersion), 0);
 			});
 			
 			it("shouldn't show updates past 4.0.29.11 for 10.6-10.8 users", async function () {
@@ -77,18 +77,18 @@ describe("update.php", function () {
 		});
 		
 		describe("Windows", function () {
-			it("should offer major update to 5.0 for Windows 4.0 4.0.29.10", async function () {
+			it("should offer major update to 6.0 for Windows 4.0.29.10", async function () {
 				var result = await req(
 					url + '/4.0.29.10/20160511/WINNT_x86-msvc/en-US/release/Windows_NT%2010.0.0.0%20(x64)/update.xml'
 				);
 				assert.lengthOf(result.updates.update, 1);
 				assert.propertyVal(result.updates.update[0].$, 'type', 'major');
-				assert.isAbove(vcmp('5.0', result.updates.update[0].$.appVersion), 0);
+				assert.isAbove(vcmp('6.0', result.updates.update[0].$.appVersion), 0);
 				
 				// Verify patches
 				assert.lengthOf(result.updates.update[0].patch, 1);
 				var complete = result.updates.update[0].patch.filter(x => x.$.type == 'complete')[0];
-				assert.match(complete.$.URL, /https:\/\/.+\/5\.0\.\d+\/Zotero-5\.0\.\d+-full_win32.mar/);
+				assert.match(complete.$.URL, /https:\/\/.+\/6\.0\.\d+\/Zotero-6\.0\.\d+-full_win32.mar/);
 			});
 			
 			/*it("shouldn't offer update for Windows 4.0.29.17 by default", async function () {
@@ -98,14 +98,14 @@ describe("update.php", function () {
 				assert.notOk(result.updates);
 			});*/
 			
-			it("should offer major update to 5.0 for Windows 4.0.29.17 with ?force=1", async function () {
+			it("should offer major update to 6.0 for Windows 4.0.29.17 with ?force=1", async function () {
 				var result = await req(
 					url + '/4.0.29.17/20170119075515/WINNT_x86-msvc-x64/en-US/release/Windows_NT%206.1.1.0%20(x64)/update.xml?force=1'
 				);
 				assert.lengthOf(result.updates.update, 1);
 				assert.propertyVal(result.updates.update[0].$, 'type', 'major');
 				assert.isAbove(vcmp('5.0', result.updates.update[0].$.appVersion), 0);
-				assert.match(result.updates.update[0].$.appVersion, /5\.0\.[\d]+/);
+				assert.match(result.updates.update[0].$.appVersion, /6\.0\.[\d]+/);
 			});
 			
 			it("should offer minor update to 5.0.77 for Zotero 5 on Windows XP", async function () {
@@ -128,14 +128,14 @@ describe("update.php", function () {
 		});
 		
 		describe("Linux", function () {
-			it("should offer major update to 5.0 for Linux x86_64 4.0.29.10", async function () {
+			it("should offer major update to 6.0 for Linux x86_64 4.0.29.10", async function () {
 				var result = await req(
 					url + '/4.0.29.10/20160511/Linux_x86_64-gcc3/en-US/release/Linux%204.4.0-79-generic%20(GTK%202.24.30)/update.xml'
 				);
 				assert.lengthOf(result.updates.update, 1);
 				assert.propertyVal(result.updates.update[0].$, 'type', 'major');
-				assert.isAbove(vcmp('5.0', result.updates.update[0].$.appVersion), 0);
-				assert.match(result.updates.update[0].$.appVersion, /5\.0\.[\d]+/);
+				assert.isAbove(vcmp('6.0', result.updates.update[0].$.appVersion), 0);
+				assert.match(result.updates.update[0].$.appVersion, /6\.0\.[\d]+/);
 			});
 			
 			/*it("shouldn't offer update for Linux i686 4.0.29.10 by default", async function () {
@@ -152,27 +152,27 @@ describe("update.php", function () {
 				assert.notOk(result.updates);
 			});*/
 			
-			it("should offer major update to 5.0 for Linux x86_64 4.0.29.10 with ?force=1", async function () {
+			it("should offer major update to 6.0 for Linux x86_64 4.0.29.10 with ?force=1", async function () {
 				var result = await req(
 					url + '/4.0.29.10/20160511/Linux_x86_64-gcc3/en-US/release/Linux%204.4.0-79-generic%20(GTK%202.24.30)/update.xml?force=1'
 				);
 				assert.lengthOf(result.updates.update, 1);
 				assert.propertyVal(result.updates.update[0].$, 'type', 'major');
-				assert.isAbove(vcmp('5.0', result.updates.update[0].$.appVersion), 0);
-				assert.match(result.updates.update[0].$.appVersion, /5\.0\.[\d]+/);
+				assert.isAbove(vcmp('6.0', result.updates.update[0].$.appVersion), 0);
+				assert.match(result.updates.update[0].$.appVersion, /6\.0\.[\d]+/);
 			});
 		});
 	});
 	
 	describe("beta channel", function () {
-		it("should offer minor update to latest beta from earlier 5.0 Windows build", async function () {
+		it("should offer minor update to latest beta from earlier 6.0 Windows build", async function () {
 			var result = await req(
-				url + '/5.0-beta.202%2Bddc9989/20170521060737/WINNT_x86-msvc-x64/en-US/beta/Windows_NT%2010.0.0.0%20(x64)/update.xml'
+				url + '/6.0-beta.202%2Bddc9989/20170521060737/WINNT_x86-msvc-x64/en-US/beta/Windows_NT%2010.0.0.0%20(x64)/update.xml'
 			);
 			assert.lengthOf(result.updates.update, 1);
 			assert.propertyVal(result.updates.update[0].$, 'type', 'minor');
-			assert.isAbove(vcmp('5.0-beta.202+ddc9989', result.updates.update[0].$.appVersion), 0);
-			assert.match(result.updates.update[0].$.appVersion, /5\.0\.[\d]+-beta/);
+			assert.isAbove(vcmp('6.0-beta.202+ddc9989', result.updates.update[0].$.appVersion), 0);
+			assert.match(result.updates.update[0].$.appVersion, /6\.0\.[\d]+-beta/);
 		});
 	});
 });
