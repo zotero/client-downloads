@@ -314,6 +314,9 @@ class ClientDownloads {
 		if ($platform == 'win32-zip') {
 			$platform = 'win32';
 		}
+		if ($platform == 'win64-zip') {
+			$platform = 'win64';
+		}
 		if (!in_array($channel, $this->channels)) {
 			error_log("Invalid channel '$channel'");
 			return false;
