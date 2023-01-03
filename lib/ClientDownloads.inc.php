@@ -78,9 +78,14 @@ class ClientDownloads {
 		$completeHash = false;
 		$partialHash = false;
 		
-		// Updates are minor if the first 3 characters in the version haven't changed, and
-		// if major is set to false
-		$isMinor = !strncmp($build["version"], $fromVersion, 3) && !$build["major"];
+		if (isset($build["major"]) && !is_null($build["major"])) {
+			$isMinor = !$build["major"];
+		}
+		// If not explicitly set as major or minor, it's minor if the first 3 characters in the
+		// version haven't changed
+		else {
+			$isMinor = !strncmp($build["version"], $fromVersion, 3);
+		}
 		$type = $isMinor ? "minor" : "major";
 		
 		// Read in hashes and files

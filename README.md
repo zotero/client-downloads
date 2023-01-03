@@ -7,7 +7,7 @@ Current versions and updates are specified by the following files in the 'manife
 ```
 [
   {
-    "major": false,
+    "major": null,
     "version": "5.0-beta.209+98544edde",
     "detailsURL": "https://www.zotero.org/support/5.0_changelog",
     "buildID": "20170608144058"
