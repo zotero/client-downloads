@@ -4,7 +4,7 @@ require('ToolkitVersionComparator.inc.php');
 
 class ClientDownloads {
 	private $channels = [
-		'release', 'beta', 'dev'
+		'release', 'beta', 'dev', 'test'
 	];
 	// Key is the format passed by the Mozilla update check
 	private $platforms = [
