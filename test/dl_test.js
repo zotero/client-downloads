@@ -74,34 +74,43 @@ describe("dl.php", function () {
 			assert.match(result, /client\/release\/5\.0\.[\d]+\/Zotero-5\.0\.[\d]+_setup.exe$/);
 		});
 		
-		it("should offer setup.exe for win32 5.0.77 beta", async function () {
+		it.skip("should offer _x64_setup.exe for win-x64", async function () {
+			var result = await req(
+				url + '?channel=release&platform=win-x64'
+			);
+			assert.match(result, /client\/release\/7\.0\.[\d]+\/Zotero-7\.0\.[\d]+_setup.exe$/);
+		});
+	});
+	
+	describe("beta channel", function () {
+		it("should offer setup.exe for 32-bit Windows for 5.0.77", async function () {
 			var result = await req(
 				url + '?channel=beta&platform=win32&version=5.0.77'
 			);
 			assert.match(result, /client\/beta\/5\.0\.[\d]+\/Zotero-5\.0\.[\d]+_setup.exe$/);
 		});
 		
-		it("should offer setup32.exe for win32 5.0.78", async function () {
-			var result = await req(
-				url + '?channel=release&platform=win32&version=5.0.78'
-			);
-			assert.match(result, /client\/release\/5\.0\.[\d]+\/Zotero-5\.0\.[\d]+_setup32.exe$/);
-		});
-		
-		it.skip("should offer setup.exe for win64", async function () {
-			var result = await req(
-				url + '?channel=release&platform=win64'
-			);
-			assert.match(result, /client\/release\/6\.0\.[\d]+\/Zotero-6\.0\.[\d]+_setup.exe$/);
-		});
-	});
-	
-	describe("beta channel", function () {
-		it("should offer 6.0 Beta for Windows", async function () {
+		it("should offer 6.0 beta installer for Windows", async function () {
 			var result = await req(
 				url + '?channel=beta&platform=win32'
 			);
-			assert.ok(result.match(/client\/beta\/6\.0\.[\d]+-beta.+Zotero-6\.0\.[\d]+-beta/));
+			assert.ok(result.match(/client\/beta\/6\.0\.[\d]+-beta.+Zotero-6\.0\.[\d]+-beta\.[^/]+_setup.exe/));
+		});
+	});
+	
+	describe("dev channel", function () {
+		it("should offer 7.0 installer for 32-bit Windows", async function () {
+			var result = await req(
+				url + '?channel=dev&platform=win32'
+			);
+			assert.ok(result.match(/client\/dev\/7\.0\.[\d]+-dev\.[^/]+\/Zotero-7\.0\.[\d]+-dev\.[^/]+_win32_setup\.exe/));
+		});
+		
+		it("should offer 7.0 ZIP for 64-bit Windows", async function () {
+			var result = await req(
+				url + '?channel=dev&platform=win-x64-zip'
+			);
+			assert.ok(result.match(/client\/dev\/7\.0\.[\d]+-dev\.[^/]+\/Zotero-7\.0\.[\d]+-dev\.[^/]+_win-x64\.zip/));
 		});
 	});
 });

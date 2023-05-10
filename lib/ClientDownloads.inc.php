@@ -9,7 +9,7 @@ class ClientDownloads {
 	// Key is the format passed by the Mozilla update check
 	private $platforms = [
 		"Darwin" => "mac",
-		"WINNT_x86_64" => "win64",
+		"WINNT_x86_64" => "win-x64",
 		"WINNT_x86" => "win32",
 		"Linux_x86_64" => "linux-x86_64",
 		"Linux_x86" => "linux-i686"
@@ -319,8 +319,8 @@ class ClientDownloads {
 		if ($platform == 'win32-zip') {
 			$platform = 'win32';
 		}
-		if ($platform == 'win64-zip') {
-			$platform = 'win64';
+		if ($platform == 'win-x64-zip') {
+			$platform = 'win-x64';
 		}
 		if (!in_array($channel, $this->channels)) {
 			error_log("Invalid channel '$channel'");
