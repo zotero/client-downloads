@@ -1,4 +1,3 @@
-const Promise = require('bluebird');
 const rp = require('request-promise');
 const url = 'http://localhost:12562/dl.php';
 const assert = require('chai').assert;
