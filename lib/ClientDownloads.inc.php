@@ -53,10 +53,25 @@ class ClientDownloads {
 		}
 		else {
 			// Find the latest build for this channel and OS
-			$build = $this->getBuild($channel, $os);
-			if (!$build) {
-				error_log("Build $channel/$os not found");
+			$builds = $this->getBuilds($channel, $os);
+			if (!$builds) {
+				error_log("No builds found for $channel/$os");
 				return false;
+			}
+			
+			// TEMP: If client isn't already Zotero 7, don't include Zotero 7 builds if not a manual
+			// update or if <10.12
+			$zotero7OrLater = \ToolkitVersionComparator::compare($fromVersion, "6.999") >= 0;
+			$preSierraMac = $os == 'mac' && $clientInfo['osVersion'] < 'Darwin 16.0.0';
+			if (!$zotero7OrLater && (!$clientInfo['manual'] || $preSierraMac)) {
+				$builds = array_filter($builds, function ($x) {
+					return strpos($x['version'], "6.0") === 0;
+				});
+			}
+			
+			$build = array_pop($builds);
+			if ($build) {
+				error_log("Build not found for $channel/$os");
 			}
 		}
 		
@@ -66,7 +81,7 @@ class ClientDownloads {
 		}
 		
 		// Check for a hard-coded upgrade for this version
-		$updateOverride = $this->getUpdateDataOverride($os, $fromVersion);
+		$updateOverride = $this->getUpdateDataOverride($channel, $os, $fromVersion);
 		if ($updateOverride) {
 			$updates[] = $updateOverride;
 			return $updates;
@@ -196,7 +211,8 @@ class ClientDownloads {
 	
 	
 	public function getBuildVersion($channel, $platform) {
-		$build = $this->getBuild($channel, $platform);
+		$builds = $this->getBuilds($channel, $platform);
+		$build = array_pop($builds);
 		return $build ? $build['version'] : false;
 	}
 	
@@ -263,52 +279,76 @@ class ClientDownloads {
 	 * Unlike getBuildOverride(), which specifies a version to use the existing update data from,
 	 * this specifies the exact update data to use.
 	 */
-	private function getUpdateDataOverride($os, $fromVersion) {
+	private function getUpdateDataOverride($channel, $os, $fromVersion) {
 		// Check for fixed updates
 		if ($os == 'mac') {
-			// Don't show updates past 4.0.29.11 for 10.6-10.8 users
-			if (isset($_SERVER['HTTP_USER_AGENT'])
-					&& (strpos($_SERVER["HTTP_USER_AGENT"], "OS X 10.6;") !== false
-					|| strpos($_SERVER["HTTP_USER_AGENT"], "OS X 10.7;") !== false
-					|| strpos($_SERVER["HTTP_USER_AGENT"], "OS X 10.8;") !== false)) {
-				return [
-					'type' => 'minor',
-					'version' => '4.0.29.11',
-					'buildID' => '20160827171848',
-					'detailsURL' => 'http://www.zotero.org/support/4.0_changelog',
-					'patches' => [
-						[
-							'type' => 'complete',
-							'URL' => $this->getBaseURI('release', '4.0.29.11') . 'Zotero-4.0.29.11-full_mac.mar',
-							'hashFunction' => 'SHA512',
-							'hashValue' => '1433f86d7faa28ae46c8c064aa436da20b6eef3cd9403c70aa8eca7e85255e7a2596919377d22f44232714852135c36c591282d438757b0a7c77d6356caf3822',
-							'size' => 75353698
+			if ($channel == 'release') {
+				// Don't show updates past 4.0.29.11 for 10.6-10.8 users
+				if (isset($_SERVER['HTTP_USER_AGENT'])
+						&& (strpos($_SERVER["HTTP_USER_AGENT"], "OS X 10.6;") !== false
+						|| strpos($_SERVER["HTTP_USER_AGENT"], "OS X 10.7;") !== false
+						|| strpos($_SERVER["HTTP_USER_AGENT"], "OS X 10.8;") !== false)) {
+					return [
+						'type' => 'minor',
+						'version' => '4.0.29.11',
+						'buildID' => '20160827171848',
+						'detailsURL' => 'http://www.zotero.org/support/4.0_changelog',
+						'patches' => [
+							[
+								'type' => 'complete',
+								'URL' => $this->getBaseURI('release', '4.0.29.11') . 'Zotero-4.0.29.11-full_mac.mar',
+								'hashFunction' => 'SHA512',
+								'hashValue' => '1433f86d7faa28ae46c8c064aa436da20b6eef3cd9403c70aa8eca7e85255e7a2596919377d22f44232714852135c36c591282d438757b0a7c77d6356caf3822',
+								'size' => 75353698
+							]
 						]
-					]
-				];
-			}
-			
-			switch ($fromVersion) {
-			case '4.0.28.6':
-			case '4.0.28.7':
-				return [
-					'type' => 'minor',
-					'version' => 'You will need to download this update from zotero.org/download',
-					'buildID' => '20151003',
-					'detailsURL' => 'http://www.zotero.org/support/4.0_changelog',
-					'showPrompt' => 'true',
-					'promptWaitTime' => '1',
-					'patches' => [
-						[
-							'type' => 'complete',
-							'URL' => 'https://www.zotero.org/download/client/4.0.28.8-mac-update-failure',
-							'hashFunction' => 'SHA512',
-							'hashValue' => '3a777d6df7c87a496643d1a24261b2bce65a2cea16e9fff1ab7f9dfdb5c752af537783e49d6f14be818f06c9bc92debc6d0e3efa539ff0ff15ec9421a26e8e7b',
-							'size' => 44520206
+					];
+				}
+				
+				switch ($fromVersion) {
+				case '4.0.28.6':
+				case '4.0.28.7':
+					return [
+						'type' => 'minor',
+						'version' => 'You will need to download this update from zotero.org/download',
+						'buildID' => '20151003',
+						'detailsURL' => 'http://www.zotero.org/support/4.0_changelog',
+						'showPrompt' => 'true',
+						'promptWaitTime' => '1',
+						'patches' => [
+							[
+								'type' => 'complete',
+								'URL' => 'https://www.zotero.org/download/client/4.0.28.8-mac-update-failure',
+								'hashFunction' => 'SHA512',
+								'hashValue' => '3a777d6df7c87a496643d1a24261b2bce65a2cea16e9fff1ab7f9dfdb5c752af537783e49d6f14be818f06c9bc92debc6d0e3efa539ff0ff15ec9421a26e8e7b',
+								'size' => 44520206
+							]
 						]
-					]
-				];
+					];
+				}
+				return;
 			}
+			/*if ($channel == 'beta') {
+				// Don't show updates past 6.0.27-beta.3 for 10.11 users
+				if (isset($_SERVER['HTTP_USER_AGENT'])
+						&& (strpos($_SERVER["HTTP_USER_AGENT"], "OS X 10.11;") !== false) {
+					return [
+						'type' => 'minor',
+						'version' => '6.0.27-beta.3+3e12f3f20',
+						'buildID' => '20230501021418',
+						'detailsURL' => 'http://www.zotero.org/support/6.0_changelog',
+						'patches' => [
+							[
+								'type' => 'complete',
+								'URL' => $this->getBaseURI('beta', '6.0.27-beta.3+3e12f3f20') . 'Zotero-6.0.27-beta.3+3e12f3f20-full_mac.mar',
+								'hashFunction' => 'SHA512',
+								'hashValue' => '73d6790fde9f4bafdc6772a809695b109fc4ebc7e4490108a1e2025f5995c0f55401acbd365f2ccfca3299900f091704ce32c3f54572e64f43e3935ac3d642a4',
+								'size' => 73649457
+							]
+						]
+					];
+				}
+			}*/
 		}
 		
 		return false;
@@ -336,15 +376,6 @@ class ClientDownloads {
 			return false;
 		}
 		return json_decode(file_get_contents($path), true);
-	}
-	
-	
-	private function getBuild($channel, $platform) {
-		$builds = $this->getBuilds($channel, $platform);
-		if (!$builds) {
-			return false;
-		}
-		return array_pop($builds);
 	}
 	
 	
