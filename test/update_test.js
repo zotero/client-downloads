@@ -14,10 +14,16 @@ const vcmp = function (a, b) {
 
 describe("update.php", function () {
 	var req = function (uri) {
-		return rp(uri)
-		.then(function (response) {
-			//console.log(response);
-			return parseXML(response);
+		return rp({
+			uri,
+			resolveWithFullResponse: true
+		})
+		.then(function (res) {
+			if (res.statusCode !== 200 && res.statusCode !== 302) {
+				console.log(res.body);
+			}
+			assert.include([200, 302], res.statusCode);
+			return parseXML(res.body);
 		});
 	};
 	

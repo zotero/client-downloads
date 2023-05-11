@@ -19,7 +19,10 @@ describe("dl.php", function () {
 			followRedirect: false
 		})
 		.then(function (res) {
-			//console.log(res);
+			if (res.statusCode !== 200 && res.statusCode !== 302) {
+				console.log(res.body);
+			}
+			assert.include([200, 302], res.statusCode);
 			return res.headers.location;
 		});
 	};
