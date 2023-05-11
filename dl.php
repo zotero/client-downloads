@@ -6,7 +6,7 @@ if (empty($_GET['platform'])) {
 	exit;
 }
 
-$cv = new \Zotero\ClientDownloads([
+$CD = new \Zotero\ClientDownloads([
 	'manifestsDir' => ROOT_DIR . "/manifests"
 ]);
 
@@ -32,12 +32,12 @@ if ($version) {
 	}
 }
 else {
-	$build = $cv->getBuildOverride($platform, $from, false);
+	$build = $CD->getBuildOverride($platform, $from, false);
 	if ($build) {
 		$version = $build['version'];
 	}
 	if (!isset($version)) {
-		$version = $cv->getBuildVersion($channel, $platform);
+		$version = $CD->getBuildVersion($channel, $platform);
 	}
 }
 
