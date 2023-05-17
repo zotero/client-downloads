@@ -105,25 +105,11 @@ class ClientDownloads {
 		
 		// Read in hashes and files
 		$versionDir = $this->manifestsDir . '/' . $channel . '/' . $build['version'];
-		
-		// Old directory format
-		if (file_exists($versionDir . "/files")) {
-			$files = file_get_contents($versionDir . "/files");
-			$hashes = file_get_contents($versionDir . "/sha512sums");
-			
-			// Make sure we have a full mar for this build
-			$completeHash = $this->hashAndSize($hashes, $files, $updateFull);
-			// Check whether we have an incremental mar for this build
-			$partialHash = $this->hashAndSize($hashes, $files, $updatePartial);
-		}
-		// New directory format
-		else if (file_exists($versionDir . "/files-" . $shortOS)) {
-			$manifest = file_get_contents($versionDir . "/files-" . $shortOS);
-			// Make sure we have a full mar for this build
-			$completeHash = $this->hashAndSize2($manifest, $updateFull);
-			// Check whether we have an incremental mar for this build
-			$partialHash = $this->hashAndSize2($manifest, $updatePartial);
-		}
+		$manifest = file_get_contents($versionDir . "/files-" . $shortOS);
+		// Make sure we have a full mar for this build
+		$completeHash = $this->hashAndSize($manifest, $updateFull);
+		// Check whether we have an incremental mar for this build
+		$partialHash = $this->hashAndSize($manifest, $updatePartial);
 		
 		$baseURI = $this->getBaseURI($channel, $build['version']);
 		
@@ -379,26 +365,7 @@ class ClientDownloads {
 	}
 	
 	
-	private function hashAndSize($hashes, $files, $file) {
-		$quoted = preg_quote($file);
-		
-		$matched = preg_match('/(?:\n|^)([^ ]+)  '.$quoted.'/', $hashes, $matches);
-		if (!$matched) return false;
-		$hash = $matches[1];
-		
-		$size = preg_match('/([0-9]+) +[^ ]+ +[^ ]+ +[^ ]+ +'.$quoted.'(?:$|\n)/', $files, $matches);
-		if (!$size) return false;
-		$size = $matches[1];
-		
-		return [
-			'hashFunction' => 'sha512',
-			'hashValue' => $hash,
-			'size' => $size
-		];
-	}
-	
-	
-	private function hashAndSize2($manifest, $file) {
+	private function hashAndSize($manifest, $file) {
 		$quoted = preg_quote($file);
 		if (!preg_match("/(?:\n|^)$quoted ([a-f0-9]+) ([0-9]+)/", $manifest, $matches)) {
 			return false;
