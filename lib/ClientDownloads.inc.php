@@ -46,6 +46,8 @@ class ClientDownloads {
 			return $updates;
 		}
 		
+		$fromZotero7OrLater = \ToolkitVersionComparator::compare($fromVersion, "6.999") >= 0;
+		
 		// Check for a specific build for this version
 		$buildOverride = $this->getBuildOverride($clientInfo['osVersion'], $fromVersion, $clientInfo['manual']);
 		if ($buildOverride) {
@@ -61,9 +63,8 @@ class ClientDownloads {
 			
 			// TEMP: If client isn't already Zotero 7, don't include Zotero 7 builds if not a manual
 			// update or if <10.12
-			$zotero7OrLater = \ToolkitVersionComparator::compare($fromVersion, "6.999") >= 0;
 			$preSierraMac = $os == 'mac' && $clientInfo['osVersion'] < 'Darwin 16.0.0';
-			if (!$zotero7OrLater && (!$clientInfo['manual'] || $preSierraMac)) {
+			if (!$fromZotero7OrLater && (!$clientInfo['manual'] || $preSierraMac)) {
 				$builds = array_filter($builds, function ($x) {
 					return strpos($x['version'], "6.0") === 0;
 				});
@@ -87,9 +88,15 @@ class ClientDownloads {
 			return $updates;
 		}
 		
+		// For updates from pre-7.0 builds to 7+, offer bzip2 full mar
+		$bz = '';
+		if (!$fromZotero7OrLater && \ToolkitVersionComparator::compare($build['version'], "6.999") > 0) {
+			$bz = 'bz_';
+		}
+		
 		$shortOS = preg_replace('/^(mac|win|linux).+/', "$1", $os);
-		$updateFull = "Zotero-" . $build["version"] . "-full_" . $os . ".mar";
-		$updatePartial = "Zotero-" . $build["version"] . "-" . $fromVersion . "_" . $os . ".mar";
+		$updateFull = "Zotero-{$build["version"]}-full_{$bz}$os.mar";
+		$updatePartial = "Zotero-{$build["version"]}-{$fromVersion}_$os.mar";
 		$completeHash = false;
 		$partialHash = false;
 		

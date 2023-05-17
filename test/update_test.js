@@ -192,6 +192,7 @@ describe("Updates", function () {
 				assert.isBelow(vcmp('8.0.0-beta.1+aaaaaaaa', result.updates.update[0].$.appVersion), 0);
 				assert.propertyVal(result.updates.update[0].$, 'type', 'major');
 				assert.match(result.updates.update[0].$.appVersion, /7\.0\.[\d]+-beta/);
+				assert.include(result.updates.update[0].patch[0].$.URL, '_bz_');
 			});
 			
 			it("should offer minor update to 7.0 beta from earlier 7.0 build", async function () {
