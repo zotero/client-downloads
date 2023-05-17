@@ -70,7 +70,7 @@ class ClientDownloads {
 			}
 			
 			$build = array_pop($builds);
-			if ($build) {
+			if (!$build) {
 				error_log("Build not found for $channel/$os");
 			}
 		}
