@@ -188,9 +188,9 @@ describe("Updates", function () {
 					url + '/6.0-beta.202%2Baaaa/20230501021418/Darwin_x86_64-gcc3/en-US/beta/Darwin%2022.4.0/update.xml?force=1'
 				);
 				assert.lengthOf(result.updates.update, 1);
-				assert.propertyVal(result.updates.update[0].$, 'type', 'major');
 				assert.isAbove(vcmp('7.0.0-beta.1+aaaaaaaa', result.updates.update[0].$.appVersion), 0);
 				assert.isBelow(vcmp('8.0.0-beta.1+aaaaaaaa', result.updates.update[0].$.appVersion), 0);
+				assert.propertyVal(result.updates.update[0].$, 'type', 'major');
 				assert.match(result.updates.update[0].$.appVersion, /7\.0\.[\d]+-beta/);
 			});
 			
@@ -236,9 +236,9 @@ describe("Updates", function () {
 					url + '/6.0-beta.202%2Bddc9989/20170521060737/WINNT_x86-msvc-x64/en-US/beta/Windows_NT%2010.0.0.0%20(x64)/update.xml?force=1'
 				);
 				assert.lengthOf(result.updates.update, 1);
-				assert.propertyVal(result.updates.update[0].$, 'type', 'major');
 				assert.isAbove(vcmp('7.0.0-beta.1+aaaaaaa', result.updates.update[0].$.appVersion), 0);
 				assert.isBelow(vcmp('8.0.0-beta.1+aaaaaaa', result.updates.update[0].$.appVersion), 0);
+				assert.propertyVal(result.updates.update[0].$, 'type', 'major');
 				assert.match(result.updates.update[0].$.appVersion, /7\.0\.[\d]+-beta/);
 			});
 		});
@@ -260,9 +260,9 @@ describe("Updates", function () {
 					url + '/6.0-beta.202%2Bddc9989/20170521060737/WINNT_x86-msvc-x64/en-US/beta/Windows_NT%2010.0.0.0%20(x64)/update.xml?force=1'
 				);
 				assert.lengthOf(result.updates.update, 1);
-				assert.propertyVal(result.updates.update[0].$, 'type', 'major');
 				assert.isAbove(vcmp('7.0.0-beta.1+aaaaaaa', result.updates.update[0].$.appVersion), 0);
 				assert.isBelow(vcmp('8.0.0-beta.1+aaaaaaa', result.updates.update[0].$.appVersion), 0);
+				assert.propertyVal(result.updates.update[0].$, 'type', 'major');
 				assert.match(result.updates.update[0].$.appVersion, /7\.0\.[\d]+-beta/);
 			});
 		});
