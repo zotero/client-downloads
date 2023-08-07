@@ -61,12 +61,21 @@ class ClientDownloads {
 				return false;
 			}
 			
+			$fromReader2Build = \ToolkitVersionComparator::compare($fromVersion, "7.0.0-beta.28") > 0;
+			
 			// TEMP: If client isn't already Zotero 7, don't include Zotero 7 builds if not a manual
 			// update or if <10.12
 			$preSierraMac = $os == 'mac' && $clientInfo['osVersion'] < 'Darwin 16.0.0';
 			if (!$fromZotero7OrLater && (!$clientInfo['manual'] || $preSierraMac)) {
 				$builds = array_filter($builds, function ($x) {
 					return strpos($x['version'], "6.0") === 0;
+				});
+			}
+			
+			if (!$fromReader2Build && !$clientInfo['manual']) {
+				$builds = array_filter($builds, function ($x) {
+					// Return beta 28 and earlier
+					return \ToolkitVersionComparator::compare($x['version'], "7.0.0-beta.29") < 0;
 				});
 			}
 			

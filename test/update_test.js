@@ -206,6 +206,43 @@ describe("Updates", function () {
 				assert.match(result.updates.update[0].$.appVersion, /7\.0\.[\d]+-beta/);
 			});
 			
+			it("shouldn't offer minor update past 7.0.0-beta.28 from earlier 7.0 build without force=1", async function () {
+				var result = await req(
+					url + '/7.0.0-beta.1%2Baaaaaaaaa/20230501021418/Darwin_x86_64-gcc3/en-US/beta/Darwin%2022.4.0/update.xml'
+				);
+				assert.lengthOf(result.updates.update, 1);
+				assert.propertyVal(result.updates.update[0].$, 'type', 'minor');
+				assert.equal(result.updates.update[0].$.appVersion, '7.0.0-beta.28+3a43a98f1');
+			});
+			
+			it("should offer minor update to >=7.0.0-beta.29 from earlier 7.0 build with force=1", async function () {
+				var result = await req(
+					url + '/7.0.0-beta.1%2Baaaaaaaaa/20230501021418/Darwin_x86_64-gcc3/en-US/beta/Darwin%2022.4.0/update.xml?force=1'
+				);
+				assert.lengthOf(result.updates.update, 1);
+				assert.propertyVal(result.updates.update[0].$, 'type', 'minor');
+				assert.isAbove(vcmp('7.0.0-beta.28', result.updates.update[0].$.appVersion), 0);
+			});
+			
+			// Enable once there's a beta 30
+			it.skip("should offer minor update to >=7.0.0-beta.30 from 7.0.0-beta.29 without force=1", async function () {
+				var result = await req(
+					url + '/7.0.0-beta.27%2B07309d7c2/20230501021418/Darwin_x86_64-gcc3/en-US/beta/Darwin%2022.4.0/update.xml'
+				);
+				assert.lengthOf(result.updates.update, 1);
+				assert.propertyVal(result.updates.update[0].$, 'type', 'minor');
+				assert.isAbove(vcmp('7.0.0-beta.28+3a43a98f1', result.updates.update[0].$.appVersion), 0);
+			});
+			
+			it("should offer major update to >=7.0.0-beta.29 from 6.0 build with force=1", async function () {
+				var result = await req(
+					url + '/6.0-beta.202%2Baaaa/20230501021418/Darwin_x86_64-gcc3/en-US/beta/Darwin%2022.4.0/update.xml?force=1'
+				);
+				assert.lengthOf(result.updates.update, 1);
+				assert.propertyVal(result.updates.update[0].$, 'type', 'major');
+				assert.isAbove(vcmp('7.0.0-beta.28', result.updates.update[0].$.appVersion), 0);
+			});
+			
 			it("shouldn't show updates past Zotero 6 for 10.11 users", async function () {
 				var xml = await rp({
 					uri: url + '/6.0.25/20230420171544/Darwin_x86_64-gcc3/en-US/release/Darwin%2015.6.0/update.xml?force=1',
