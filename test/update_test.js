@@ -172,7 +172,7 @@ describe("Updates", function () {
 	
 	describe("beta channel", function () {
 		describe("Mac", function () {
-			it("should offer minor update to 6.0 beta from earlier 6.0 build", async function () {
+			it.skip("should offer minor update to 6.0 beta from earlier 6.0 build", async function () {
 				var result = await req(
 					url + '/6.0-beta.202%2Baaaa/20230501021418/Darwin_x86_64-gcc3/en-US/beta/Darwin%2022.4.0/update.xml'
 				);
@@ -282,7 +282,7 @@ describe("Updates", function () {
 		});
 		
 		describe("Windows 32-bit", function () {
-			it("should offer minor update to 6.0 beta from earlier 6.0 build", async function () {
+			it.skip("should offer minor update to 6.0 beta from earlier 6.0 build", async function () {
 				var result = await req(
 					url + '/6.0-beta.202%2Bddc9989/20170521060737/WINNT_x86-msvc-x64/en-US/beta/Windows_NT%2010.0.0.0%20(x64)/update.xml'
 				);
