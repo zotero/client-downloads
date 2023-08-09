@@ -224,14 +224,13 @@ describe("Updates", function () {
 				assert.isAbove(vcmp('7.0.0-beta.28', result.updates.update[0].$.appVersion), 0);
 			});
 			
-			// Enable once there's a beta 30
-			it.skip("should offer minor update to >=7.0.0-beta.30 from 7.0.0-beta.29 without force=1", async function () {
+			it("should offer minor update to >=7.0.0-beta.30 from 7.0.0-beta.29 without force=1", async function () {
 				var result = await req(
-					url + '/7.0.0-beta.27%2B07309d7c2/20230501021418/Darwin_x86_64-gcc3/en-US/beta/Darwin%2022.4.0/update.xml'
+					url + '/7.0.0-beta.29%2Bf0e1da23b/20230501021418/Darwin_x86_64-gcc3/en-US/beta/Darwin%2022.4.0/update.xml'
 				);
 				assert.lengthOf(result.updates.update, 1);
 				assert.propertyVal(result.updates.update[0].$, 'type', 'minor');
-				assert.isAbove(vcmp('7.0.0-beta.28+3a43a98f1', result.updates.update[0].$.appVersion), 0);
+				assert.isAbove(vcmp('7.0.0-beta.29+f0e1da23b', result.updates.update[0].$.appVersion), 0);
 			});
 			
 			it("should offer major update to >=7.0.0-beta.29 from 6.0 build with force=1", async function () {
