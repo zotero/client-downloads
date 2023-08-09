@@ -61,7 +61,7 @@ class ClientDownloads {
 				return false;
 			}
 			
-			$fromReader2Build = \ToolkitVersionComparator::compare($fromVersion, "7.0.0-beta.28") > 0;
+			$fromReader2Build = \ToolkitVersionComparator::compare($fromVersion, "7.0.0-beta.29+f0e1da23b") >= 0;
 			
 			// TEMP: If client isn't already Zotero 7, don't include Zotero 7 builds if not a manual
 			// update or if <10.12
