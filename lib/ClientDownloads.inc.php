@@ -62,10 +62,9 @@ class ClientDownloads {
 				return false;
 			}
 			
-			// TEMP: If client isn't already Zotero 7, don't include Zotero 7 builds if not a manual
-			// update or if <10.12
+			// Don't include Zotero 7 builds if <10.12
 			$preSierraMac = $os == 'mac' && $clientInfo['osVersion'] < 'Darwin 16.0.0';
-			if (!$fromZotero7OrLater && (!$clientInfo['manual'] || $preSierraMac)) {
+			if ($preSierraMac) {
 				$builds = array_filter($builds, function ($x) {
 					return strpos($x['version'], "6.0") === 0;
 				});
