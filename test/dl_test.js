@@ -75,13 +75,6 @@ describe("Downloads", function () {
 			);
 			assert.match(result, /client\/release\/5\.0\.[\d]+\/Zotero-5\.0\.[\d]+_setup.exe$/);
 		});
-		
-		it.skip("should offer _x64_setup.exe for win-x64", async function () {
-			var result = await req(
-				url + '?channel=release&platform=win-x64'
-			);
-			assert.match(result, /client\/release\/7\.0\.[\d]+\/Zotero-7\.0\.[\d]+_setup.exe$/);
-		});
 	});
 	
 	describe("beta channel", function () {
