@@ -225,41 +225,41 @@ class ClientDownloads {
 		}
 		/*if (strpos($fromVersion, '4.0') === 0 && !$manual) {
 			switch ($os) {
-			case 'mac':
-				return [
-					"major" => false,
-					"version" => "4.0.29.15",
-					"detailsURL" => "https://www.zotero.org/support/4.0_changelog",
-					"buildID" => "20161003133106"
-				];
-				break;
-			
-			case 'win32':
-				return [
-					"major" => false,
-					"version" => "4.0.29.17",
-					"detailsURL" => "https://www.zotero.org/support/4.0_changelog",
-					"buildID" => "20170119075515"
-				];
-				break;
-			
-			case 'linux-i686':
-				return [
-					"major" => false,
-					"version" => "4.0.29.10",
-					"detailsURL" => "https://www.zotero.org/support/4.0_changelog",
-					"buildID" => "20160511"
-				];
-				break;
-			
-			case 'linux-x86_64':
-				return [
-					"major" => false,
-					"version" => "4.0.29.10",
-					"detailsURL" => "https://www.zotero.org/support/4.0_changelog",
-					"buildID" => "20160511"
-				];
-				break;
+				case 'mac':
+					return [
+						"major" => false,
+						"version" => "4.0.29.15",
+						"detailsURL" => "https://www.zotero.org/support/4.0_changelog",
+						"buildID" => "20161003133106"
+					];
+					break;
+				
+				case 'win32':
+					return [
+						"major" => false,
+						"version" => "4.0.29.17",
+						"detailsURL" => "https://www.zotero.org/support/4.0_changelog",
+						"buildID" => "20170119075515"
+					];
+					break;
+				
+				case 'linux-i686':
+					return [
+						"major" => false,
+						"version" => "4.0.29.10",
+						"detailsURL" => "https://www.zotero.org/support/4.0_changelog",
+						"buildID" => "20160511"
+					];
+					break;
+				
+				case 'linux-x86_64':
+					return [
+						"major" => false,
+						"version" => "4.0.29.10",
+						"detailsURL" => "https://www.zotero.org/support/4.0_changelog",
+						"buildID" => "20160511"
+					];
+					break;
 			}
 		}*/
 		return false;
@@ -299,25 +299,25 @@ class ClientDownloads {
 				}
 				
 				switch ($fromVersion) {
-				case '4.0.28.6':
-				case '4.0.28.7':
-					return [
-						'type' => 'minor',
-						'version' => 'You will need to download this update from zotero.org/download',
-						'buildID' => '20151003',
-						'detailsURL' => 'http://www.zotero.org/support/4.0_changelog',
-						'showPrompt' => 'true',
-						'promptWaitTime' => '1',
-						'patches' => [
-							[
-								'type' => 'complete',
-								'URL' => 'https://www.zotero.org/download/client/4.0.28.8-mac-update-failure',
-								'hashFunction' => 'SHA512',
-								'hashValue' => '3a777d6df7c87a496643d1a24261b2bce65a2cea16e9fff1ab7f9dfdb5c752af537783e49d6f14be818f06c9bc92debc6d0e3efa539ff0ff15ec9421a26e8e7b',
-								'size' => 44520206
+					case '4.0.28.6':
+					case '4.0.28.7':
+						return [
+							'type' => 'minor',
+							'version' => 'You will need to download this update from zotero.org/download',
+							'buildID' => '20151003',
+							'detailsURL' => 'http://www.zotero.org/support/4.0_changelog',
+							'showPrompt' => 'true',
+							'promptWaitTime' => '1',
+							'patches' => [
+								[
+									'type' => 'complete',
+									'URL' => 'https://www.zotero.org/download/client/4.0.28.8-mac-update-failure',
+									'hashFunction' => 'SHA512',
+									'hashValue' => '3a777d6df7c87a496643d1a24261b2bce65a2cea16e9fff1ab7f9dfdb5c752af537783e49d6f14be818f06c9bc92debc6d0e3efa539ff0ff15ec9421a26e8e7b',
+									'size' => 44520206
+								]
 							]
-						]
-					];
+						];
 				}
 				return;
 			}
