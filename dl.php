@@ -12,7 +12,6 @@ $CD = new \Zotero\ClientDownloads([
 
 $platform = $_GET['platform'];
 $channel = !empty($_GET['channel']) ? $_GET['channel'] : 'release';
-$from = !empty($_GET['from']) ? $_GET['from'] : null;
 $version = !empty($_GET['version']) ? $_GET['version'] : null;
 
 switch ($channel) {
@@ -32,13 +31,7 @@ if ($version) {
 	}
 }
 else {
-	$build = $CD->getBuildOverride($platform, $from, false);
-	if ($build) {
-		$version = $build['version'];
-	}
-	if (!isset($version)) {
-		$version = $CD->getBuildVersion($channel, $platform);
-	}
+	$version = $CD->getBuildVersion($channel, $platform);
 }
 
 if (!$version) {
