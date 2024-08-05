@@ -50,7 +50,7 @@ class ClientDownloads {
 		$fromZotero7OrLater = \ToolkitVersionComparator::compare($fromVersion, "6.999") >= 0;
 		
 		// Check for a specific build for this version
-		$buildOverride = $this->getBuildOverride($clientInfo['osVersion'], $fromVersion, $clientInfo['manual']);
+		$buildOverride = $this->getBuildOverride($channel, $os, $clientInfo['osVersion'], $fromVersion, $clientInfo['manual']);
 		if ($buildOverride) {
 			$build = $buildOverride;
 		}
@@ -61,15 +61,6 @@ class ClientDownloads {
 				error_log("No builds found for $channel/$os");
 				return false;
 			}
-			
-			// Don't include Zotero 7 builds if <10.12
-			$preSierraMac = $os == 'mac' && $clientInfo['osVersion'] < 'Darwin 16.0.0';
-			if ($preSierraMac) {
-				$builds = array_filter($builds, function ($x) {
-					return strpos($x['version'], "6.0") === 0;
-				});
-			}
-			
 			$build = array_pop($builds);
 			if (!$build) {
 				error_log("Build not found for $channel/$os");
@@ -213,7 +204,8 @@ class ClientDownloads {
 	/**
 	 * Return a specific build for some versions
 	 */
-	public function getBuildOverride($osVersion, $fromVersion, $manual) {
+	private function getBuildOverride($channel, $os, $osVersion, $fromVersion, $manual) {
+		// Don't serve past 5.0.77 for Vista or earlier
 		if (strpos($osVersion, "Windows_NT 5.") === 0
 				|| strpos($osVersion, "Windows_NT 6.0") === 0) {
 			return [
@@ -223,45 +215,58 @@ class ClientDownloads {
 				"buildID" => "20191031072159"
 			];
 		}
-		/*if (strpos($fromVersion, '4.0') === 0 && !$manual) {
+		// Don't serve past 6.0.37 for macOS 10.9-10.11
+		if ($os == 'mac'
+				&& isset($_SERVER['HTTP_USER_AGENT'])
+				&& preg_match('/OS X 10\.(9|10|11);/', $_SERVER["HTTP_USER_AGENT"])) {
+			return [
+				"major" => !!preg_match('/^[12345]\./', $fromVersion),
+				"version" => "6.0.37",
+				"detailsURL" => "https://www.zotero.org/support/6.0_changelog",
+				"buildID" => "20240319052808"
+			];
+		}
+		
+		// Serve Z6 for automatic updates for now
+		if (!$manual && $channel == 'release') {
 			switch ($os) {
 				case 'mac':
 					return [
 						"major" => false,
-						"version" => "4.0.29.15",
-						"detailsURL" => "https://www.zotero.org/support/4.0_changelog",
-						"buildID" => "20161003133106"
+						"version" => "6.0.37",
+						"detailsURL" => "https://www.zotero.org/support/6.0_changelog",
+						"buildID" => "20240319052808"
 					];
 					break;
 				
 				case 'win32':
 					return [
 						"major" => false,
-						"version" => "4.0.29.17",
-						"detailsURL" => "https://www.zotero.org/support/4.0_changelog",
-						"buildID" => "20170119075515"
+						"version" => "6.0.36",
+						"detailsURL" => "https://www.zotero.org/support/6.0_changelog",
+						"buildID" => "20240313202508"
 					];
 					break;
 				
 				case 'linux-i686':
 					return [
 						"major" => false,
-						"version" => "4.0.29.10",
-						"detailsURL" => "https://www.zotero.org/support/4.0_changelog",
-						"buildID" => "20160511"
+						"version" => "6.0.35",
+						"detailsURL" => "https://www.zotero.org/support/6.0_changelog",
+						"buildID" => "20240304070404"
 					];
 					break;
 				
 				case 'linux-x86_64':
 					return [
 						"major" => false,
-						"version" => "4.0.29.10",
-						"detailsURL" => "https://www.zotero.org/support/4.0_changelog",
-						"buildID" => "20160511"
+						"version" => "6.0.35",
+						"detailsURL" => "https://www.zotero.org/support/6.0_changelog",
+						"buildID" => "20240304070404"
 					];
 					break;
 			}
-		}*/
+		}
 		return false;
 	}
 	
