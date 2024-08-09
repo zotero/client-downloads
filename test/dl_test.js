@@ -35,12 +35,28 @@ describe("Downloads", function () {
 			assert.match(result, /client\/release\/7\.0\/Zotero-7.0\.dmg$/);
 		});
 		
-		it("should offer 7.0 for Windows by default", async function () {
+		it("should offer 7.0 for Windows x64 by default", async function () {
+			var result = await req(
+				url + '?channel=release&platform=win-x64'
+			);
+			//assert.match(result, /client\/release\/7\.0\.[\d]+\/Zotero-7.0\.[\d]+_x64_setup.exe$/);
+			assert.match(result, /client\/release\/7\.0\/Zotero-7.0\_x64_setup.exe$/);
+		});
+		
+		it("should offer 7.0 for Windows arm64 by default", async function () {
+			var result = await req(
+				url + '?channel=release&platform=win-arm64'
+			);
+			//assert.match(result, /client\/release\/7\.0\.[\d]+\/Zotero-7.0\.[\d]+_arm64_setup.exe$/);
+			assert.match(result, /client\/release\/7\.0\/Zotero-7.0\_arm64_setup.exe$/);
+		});
+		
+		it("should offer 7.0 for Windows x86 by default", async function () {
 			var result = await req(
 				url + '?channel=release&platform=win32'
 			);
-			//assert.match(result, /client\/release\/7\.0\.[\d]+\/Zotero-7.0\.[\d]+_setup.exe$/);
-			assert.match(result, /client\/release\/7\.0\/Zotero-7.0\_setup.exe$/);
+			//assert.match(result, /client\/release\/7\.0\.[\d]+\/Zotero-7.0\.[\d]+_win32_setup.exe$/);
+			assert.match(result, /client\/release\/7\.0\/Zotero-7.0\_win32_setup.exe$/);
 		});
 		
 		it("should offer 7.0 for Linux x86_64 by default", async function () {

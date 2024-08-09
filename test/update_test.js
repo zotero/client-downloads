@@ -102,12 +102,12 @@ describe("Updates", function () {
 		describe("Windows", function () {
 			it("shouldn't offer update for 6.0.36 by default", async function () {
 				var result = await req(
-					url + '/6.0.36/20240313202508/WINNT_x86-msvc-x86/en-US/release/Windows_NT%206.1.1.0%20(x64)/update.xml'
+					url + '/6.0.36/20240313202508/WINNT_win32-msvc-x86/en-US/release/Windows_NT%206.1.1.0%20(x64)/update.xml'
 				);
 				assert.notOk(result.updates);
 			});
 			
-			it("should offer major update to 7.0 for 6.0.36 with ?force=1", async function () {
+			it("should offer major update to 7.0 win32 for 6.0.36 win32 with ?force=1", async function () {
 				var result = await req(
 					url + '/6.0.36/20240313202508/WINNT_x86-msvc-x86/en-US/release/Windows_NT%2010.0.0.0%20(x86)/update.xml?force=1'
 				);
@@ -116,7 +116,7 @@ describe("Updates", function () {
 				assert.isAtLeast(vcmp('7.0', result.updates.update[0].$.appVersion), 0);
 				
 				// Verify patches
-				assert.lengthOf(result.updates.update[0].patch, 2);
+				assert.lengthOf(result.updates.update[0].patch, 1);
 				var complete = result.updates.update[0].patch.filter(x => x.$.type == 'complete')[0];
 				//assert.match(complete.$.URL, /https:\/\/.+\/7\.0\.\d+\/Zotero-7\.0\.\d+-full_bz_win32.mar/);
 				assert.match(complete.$.URL, /https:\/\/.+\/7\.0\/Zotero-7\.0-full_bz_win32.mar/);
