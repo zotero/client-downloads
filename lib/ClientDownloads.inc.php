@@ -49,6 +49,11 @@ class ClientDownloads {
 		
 		$fromZotero7OrLater = \ToolkitVersionComparator::compare($fromVersion, "6.999") >= 0;
 		
+		// Fix incorrect channel after update in early fx128 builds
+		if ($channel == 'esr' && $os == 'mac' && preg_match('/^7\.1-beta\.[1234]/', $fromVersion)) {
+			$channel = 'beta';
+		}
+		
 		// Check for a specific build for this version
 		$buildOverride = $this->getBuildOverride($channel, $os, $clientInfo['osVersion'], $fromVersion, $clientInfo['manual']);
 		if ($buildOverride) {
