@@ -232,8 +232,8 @@ class ClientDownloads {
 			];
 		}
 		
-		// Serve Z6 for automatic updates for now
-		if (!$manual && $channel == 'release') {
+		// Serve Z6 for automatic updates from <7.0 for now
+		if (!$manual && $channel == 'release' && preg_match('/^[123456]\./', $fromVersion)) {
 			switch ($os) {
 				case 'mac':
 					return [
