@@ -13,7 +13,8 @@ class ClientDownloads {
 		"WINNT_aarch64" => "win-arm64",
 		"WINNT_x86" => "win32",
 		"Linux_x86_64" => "linux-x86_64",
-		"Linux_x86" => "linux-i686"
+		"Linux_x86" => "linux-i686",
+		"Linux_aarch64" => "linux-arm64"
 	];
 	
 	
