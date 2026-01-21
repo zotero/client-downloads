@@ -45,6 +45,7 @@ case 'mac':
 	break;
 
 case 'linux-i686':
+case 'linux-arm64':
 case 'linux-x86_64':
 	$filename = "Zotero-{$version}_$platform.tar.bz2";
 	break;
