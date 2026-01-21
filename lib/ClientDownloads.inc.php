@@ -288,27 +288,25 @@ class ClientDownloads {
 			list($_, $darwinVersion) = explode(' ', $osVersion);
 			list($darwinMajorVersion) = explode('.', $darwinVersion);
 			
-			// Don't serve past 7.0/7.1 beta for 10.14 Mojave or earlier
+			// Don't serve past 7.0.32 for 10.14 Mojave or earlier
 			if ($darwinMajorVersion <= 18) {
-				/*if ($channel == 'release') {
+				if ($channel == 'release') {
 					return [
-						"major" => !!preg_match('/^[12345]\./', $fromVersion),
-						"version" => "7.0.22",
+						"version" => "7.0.32",
 						"detailsURL" => "https://www.zotero.org/support/7.0_changelog",
-						"buildID" => "20250725113910"
+						"buildID" => "20260114151045"
 					];
 				}
-				else */if ($channel == 'beta') {
+				else if ($channel == 'beta') {
 					return [
-						"major" => false,
 						"version" => "7.1-beta.48+735922a2b",
 						"detailsURL" => "https://www.zotero.org/support/7.0_changelog",
 						"buildID" => "20250724122241"
 					];
 				}
-				/*else {
+				else {
 					return false;
-				}*/
+				}
 			}
 		}
 		

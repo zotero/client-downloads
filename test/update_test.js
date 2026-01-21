@@ -86,7 +86,19 @@ describe("Updates", function () {
 				assert.match(result.updates.update[0].$.appVersion, /6\.0\.[\d]+/);
 			});
 			
-			it("should show updates past Zotero 6 for 10.12 users", async function () {
+			it("shouldn't show updates past Zotero 7.0.32 for 10.14 users", async function () {
+				var xml = await rp({
+					uri: url + '/7.0.31/20240112094512/Darwin_x86_64-gcc3/en-US/release/Darwin%2018.7.0/update.xml?force=1',
+					headers: {
+						'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:115.0) Gecko/20100101 Zotero/7.0.31'
+					}
+				});
+				var result = await parseXML(xml);
+				assert.lengthOf(result.updates.update, 1);
+				assert.match(result.updates.update[0].$.appVersion, /7\.0/);
+			});
+			
+			it("should show updates past Zotero 6 for 10.15 users", async function () {
 				var xml = await rp({
 					uri: url + '/6.0.25/20230420171544/Darwin_x86_64-gcc3/en-US/release/Darwin%2015.6.0/update.xml',
 					headers: {
