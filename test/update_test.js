@@ -29,16 +29,9 @@ describe("Updates", function () {
 	
 	describe("release channel", function () {
 		describe("Mac", function () {
-			it("shouldn't offer update for 6.0.37 by default", async function () {
+			it("should offer major update to 7.0 for 6.0.37", async function () {
 				var result = await req(
-					url + '/6.0.37/20240319052808/Darwin_x86_64-gcc3/en-US/release/Darwin%2023.5.0/update.xml'
-				);
-				assert.notOk(result.updates);
-			});
-			
-			it("should offer major update to 7.0 for 6.0.37 with ?force=1", async function () {
-				var result = await req(
-					url + '/4.0.29.15/20161003133106/Darwin_x86_64-gcc3-u-i386-x86_64/en-US/release/Darwin%2016.6.0/update.xml?force=1'
+					url + '/4.0.29.15/20161003133106/Darwin_x86_64-gcc3-u-i386-x86_64/en-US/release/Darwin%2016.6.0/update.xml'
 				);
 				assert.lengthOf(result.updates.update, 1);
 				assert.propertyVal(result.updates.update[0].$, 'type', 'major');
@@ -47,7 +40,7 @@ describe("Updates", function () {
 				assert.match(result.updates.update[0].$.appVersion, /7\.0/);
 			});
 			
-			it("should offer minor update from earlier 6.0 build", async function () {
+			/*it("should offer minor update from earlier 6.0 build", async function () {
 				var result = await req(
 					url + '/6.0/20171003133106/Darwin_x86_64-gcc3-u-i386-x86_64/en-US/release/Darwin%2016.6.0/update.xml'
 				);
@@ -55,7 +48,7 @@ describe("Updates", function () {
 				assert.propertyVal(result.updates.update[0].$, 'type', 'minor');
 				assert.isAbove(vcmp('6.0', result.updates.update[0].$.appVersion), 0);
 				assert.isBelow(vcmp('7.0', result.updates.update[0].$.appVersion), 0);
-			});
+			});*/
 			
 			it("should offer minor update from earlier 7.0 build", async function () {
 				var result = await req(
@@ -64,7 +57,7 @@ describe("Updates", function () {
 				assert.lengthOf(result.updates.update, 1);
 				assert.propertyVal(result.updates.update[0].$, 'type', 'minor');
 				assert.isAbove(vcmp('7.0.12', result.updates.update[0].$.appVersion), 0);
-				assert.isBelow(vcmp('7.1', result.updates.update[0].$.appVersion), 0);
+				assert.isBelow(vcmp('8.0', result.updates.update[0].$.appVersion), 0);
 			});
 			
 			it("shouldn't show updates past 4.0.29.11 for 10.6-10.8 users", async function () {
@@ -110,16 +103,9 @@ describe("Updates", function () {
 		});
 		
 		describe("Windows", function () {
-			it("shouldn't offer update for 6.0.36 by default", async function () {
+			it("should offer major update to 7.0 win32 for 6.0.36 win32", async function () {
 				var result = await req(
-					url + '/6.0.36/20240313202508/WINNT_win32-msvc-x86/en-US/release/Windows_NT%206.1.1.0%20(x64)/update.xml'
-				);
-				assert.notOk(result.updates);
-			});
-			
-			it("should offer major update to 7.0 win32 for 6.0.36 win32 with ?force=1", async function () {
-				var result = await req(
-					url + '/6.0.36/20240313202508/WINNT_x86-msvc-x86/en-US/release/Windows_NT%2010.0.0.0%20(x86)/update.xml?force=1'
+					url + '/6.0.36/20240313202508/WINNT_x86-msvc-x86/en-US/release/Windows_NT%2010.0.0.0%20(x86)/update.xml'
 				);
 				assert.lengthOf(result.updates.update, 1);
 				assert.propertyVal(result.updates.update[0].$, 'type', 'major');
@@ -138,7 +124,7 @@ describe("Updates", function () {
 				assert.lengthOf(result.updates.update, 1);
 				assert.propertyVal(result.updates.update[0].$, 'type', 'minor');
 				assert.isAbove(vcmp('7.0.13', result.updates.update[0].$.appVersion), 0);
-				assert.isBelow(vcmp('7.1', result.updates.update[0].$.appVersion), 0);
+				assert.isBelow(vcmp('8.0', result.updates.update[0].$.appVersion), 0);
 			});
 			
 			it("should offer minor update to 5.0.77 for Zotero 5 on Windows XP", async function () {
@@ -161,16 +147,9 @@ describe("Updates", function () {
 		});
 		
 		describe("Linux", function () {
-			it("shouldn't offer update for 6.0.35 by default", async function () {
+			it("should offer major update to 7.0 for 6.0.35", async function () {
 				var result = await req(
 					url + '/6.0.35/20160511/Linux_x86_64-gcc3/en-US/release/Linux%204.4.0-79-generic%20(GTK%202.24.30)/update.xml'
-				);
-				assert.notOk(result.updates);
-			});
-			
-			it("should offer major update to 7.0 for 6.0.35 with ?force=1", async function () {
-				var result = await req(
-					url + '/6.0.35/20160511/Linux_x86_64-gcc3/en-US/release/Linux%204.4.0-79-generic%20(GTK%202.24.30)/update.xml?force=1'
 				);
 				assert.lengthOf(result.updates.update, 1);
 				assert.propertyVal(result.updates.update[0].$, 'type', 'major');
@@ -186,136 +165,188 @@ describe("Updates", function () {
 				assert.lengthOf(result.updates.update, 1);
 				assert.propertyVal(result.updates.update[0].$, 'type', 'minor');
 				assert.isAbove(vcmp('7.0.10', result.updates.update[0].$.appVersion), 0);
-				assert.isBelow(vcmp('7.1', result.updates.update[0].$.appVersion), 0);
+				assert.isBelow(vcmp('8.0', result.updates.update[0].$.appVersion), 0);
 			});
 		});
 	});
 	
 	describe("beta channel", function () {
 		describe("Mac", function () {
-			it("should offer major update to 7.1 beta from 6.0 build", async function () {
+			it("should offer major update to 8.0 beta from 6.0 build", async function () {
 				var result = await req(
 					url + '/6.0-beta.202%2Baaaa/20230501021418/Darwin_x86_64-gcc3/en-US/beta/Darwin%2022.4.0/update.xml'
 				);
 				assert.lengthOf(result.updates.update, 1);
-				//assert.isAbove(vcmp('7.1.0-beta.1+aaaaaaaa', result.updates.update[0].$.appVersion), 0);
-				assert.isAbove(vcmp('7.1-beta.1+aaaaaaaa', result.updates.update[0].$.appVersion), 0);
+				//assert.isAbove(vcmp('8.0.0-beta.1+aaaaaaaa', result.updates.update[0].$.appVersion), 0);
+				assert.isAbove(vcmp('8.0-beta.1+aaaaaaaa', result.updates.update[0].$.appVersion), 0);
 				assert.isBelow(vcmp('8.0.0-beta.1+aaaaaaaa', result.updates.update[0].$.appVersion), 0);
 				assert.propertyVal(result.updates.update[0].$, 'type', 'major');
 				//assert.match(result.updates.update[0].$.appVersion, /7\.0\.[\d]+-beta/);
-				assert.match(result.updates.update[0].$.appVersion, /7\.1-beta/);
+				assert.match(result.updates.update[0].$.appVersion, /8\.0-beta/);
 				assert.include(result.updates.update[0].patch[0].$.URL, '_bz_');
 			});
 			
-			it("should offer major update to 7.1 beta from earlier 7.0 build", async function () {
+			it("should offer minor update to 8.0 beta from 7.0 build", async function () {
 				var result = await req(
 					url + '/7.0.0-beta.1%2Baaaaaaaaa/20230501021418/Darwin_x86_64-gcc3/en-US/beta/Darwin%2022.4.0/update.xml'
 				);
 				assert.lengthOf(result.updates.update, 1);
-				assert.propertyVal(result.updates.update[0].$, 'type', 'major');
-				//assert.isAbove(vcmp('7.1.0-beta.1+aaaaaaaa', result.updates.update[0].$.appVersion), 0);
-				assert.isAbove(vcmp('7.1-beta.1+aaaaaaaa', result.updates.update[0].$.appVersion), 0);
+				assert.propertyVal(result.updates.update[0].$, 'type', 'minor');
+				//assert.isAbove(vcmp('8.0.0-beta.1+aaaaaaaa', result.updates.update[0].$.appVersion), 0);
+				assert.isAbove(vcmp('8.0-beta.1+aaaaaaaa', result.updates.update[0].$.appVersion), 0);
 				assert.isBelow(vcmp('8.0.0-beta.1+aaaaaaaa', result.updates.update[0].$.appVersion), 0);
 				//assert.match(result.updates.update[0].$.appVersion, /7\.0\.[\d]+-beta/);
-				assert.match(result.updates.update[0].$.appVersion, /7\.1-beta/);
+				assert.match(result.updates.update[0].$.appVersion, /8\.0-beta/);
 			});
 			
-			it("should offer minor update to 7.1 beta from earlier 7.1 build", async function () {
+			it("should offer minor update to 8.0 beta from 7.1 build", async function () {
 				var result = await req(
 					url + '/7.1-beta.1%2Baaaaaaaaa/20230501021418/Darwin_x86_64-gcc3/en-US/beta/Darwin%2022.4.0/update.xml'
 				);
 				assert.lengthOf(result.updates.update, 1);
 				assert.propertyVal(result.updates.update[0].$, 'type', 'minor');
 				//assert.isAbove(vcmp('7.1.0-beta.1+aaaaaaaa', result.updates.update[0].$.appVersion), 0);
-				assert.isAbove(vcmp('7.1-beta.1+aaaaaaaa', result.updates.update[0].$.appVersion), 0);
+				assert.isAbove(vcmp('8.0-beta.1+aaaaaaaa', result.updates.update[0].$.appVersion), 0);
+				assert.isBelow(vcmp('8.0.0-beta.1+aaaaaaaa', result.updates.update[0].$.appVersion), 0);
+				//assert.match(result.updates.update[0].$.appVersion, /8\.0\.[\d]+-beta/);
+				assert.match(result.updates.update[0].$.appVersion, /8\.0-beta/);
+			});
+			
+			it("should offer minor update to 8.0 beta from earlier 8.0 build", async function () {
+				var result = await req(
+					url + '/8.0-beta.1%2Baaaaaaaaa/20230501021418/Darwin_x86_64-gcc3/en-US/beta/Darwin%2022.4.0/update.xml'
+				);
+				assert.lengthOf(result.updates.update, 1);
+				assert.propertyVal(result.updates.update[0].$, 'type', 'minor');
+				//assert.isAbove(vcmp('8.0.0-beta.1+aaaaaaaa', result.updates.update[0].$.appVersion), 0);
+				assert.isAbove(vcmp('8.0-beta.1+aaaaaaaa', result.updates.update[0].$.appVersion), 0);
 				assert.isBelow(vcmp('8.0.0-beta.1+aaaaaaaa', result.updates.update[0].$.appVersion), 0);
 				//assert.match(result.updates.update[0].$.appVersion, /7\.0\.[\d]+-beta/);
-				assert.match(result.updates.update[0].$.appVersion, /7\.1-beta/);
+				assert.match(result.updates.update[0].$.appVersion, /8\.0-beta/);
+			});
+			
+			it("shouldn't show updates past Zotero 7.1 for 10.14 users", async function () {
+				var xml = await rp({
+					uri: url + '/7.1-beta.48%2B735922a2b/20250724122241/Darwin_aarch64-gcc3/en-US/beta/Darwin%252018.2.0/update.xml?force=1',
+					headers: {
+						'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:128.0) Gecko/20100101 Zotero/7.1-beta.48+735922a2b'
+					}
+				});
+				var result = await parseXML(xml);
+				assert.lengthOf(result.updates, 0);
+			});
+			
+			it("should show updates to Zotero 8 for 10.15 users", async function () {
+				var xml = await rp({
+					uri: url + '/7.1-beta.48%2B735922a2b/20250724122241/Darwin_aarch64-gcc3/en-US/beta/Darwin%252019.0.0/update.xml?force=1',
+					headers: {
+						'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15 rv:128.0) Gecko/20100101 Zotero/7.1-beta.48+735922a2b'
+					}
+				});
+				var result = await parseXML(xml);
+				assert.lengthOf(result.updates.update, 1);
+				assert.propertyVal(result.updates.update[0].$, 'type', 'minor');
+				assert.isAtLeast(vcmp('8.0', result.updates.update[0].$.appVersion), 0);
+				//assert.match(result.updates.update[0].$.appVersion, /8\.0\.[\d]+/);
+				assert.match(result.updates.update[0].$.appVersion, /8\.0/);
 			});
 		});
 		
 		describe("Windows 64-bit", function () {
-			it("should offer major update to 7.1 beta from 6.0 build", async function () {
+			it("should offer major update to 8.0 beta from 6.0 build", async function () {
 				var result = await req(
 					url + '/6.0-beta.202%2Bddc9989/20170521060737/WINNT_x86-msvc-x64/en-US/beta/Windows_NT%2010.0.0.0%20(x64)/update.xml'
 				);
 				assert.lengthOf(result.updates.update, 1);
-				//assert.isAbove(vcmp('7.1.0-beta.1+aaaaaaa', result.updates.update[0].$.appVersion), 0);
-				assert.isAbove(vcmp('7.1-beta.1+aaaaaaa', result.updates.update[0].$.appVersion), 0);
+				//assert.isAbove(vcmp('8.0.0-beta.1+aaaaaaa', result.updates.update[0].$.appVersion), 0);
+				assert.isAbove(vcmp('8.0-beta.1+aaaaaaa', result.updates.update[0].$.appVersion), 0);
 				assert.isBelow(vcmp('8.0.0-beta.1+aaaaaaa', result.updates.update[0].$.appVersion), 0);
 				assert.propertyVal(result.updates.update[0].$, 'type', 'major');
 				//assert.match(result.updates.update[0].$.appVersion, /7\.0\.[\d]+-beta/);
-				assert.match(result.updates.update[0].$.appVersion, /7\.1-beta/);
+				assert.match(result.updates.update[0].$.appVersion, /8\.0-beta/);
 			});
 			
-			it("should offer major update to 7.1 beta from earlier 7.0 build", async function () {
+			it("should offer minor update to 8.0 beta from 7.0 build", async function () {
 				var result = await req(
 					url + '/7.0.0-beta.1%2Baaaaaaaa/20230304083433/WINNT_x86_64-msvc-x64/en-US/beta/Windows_NT%2010.0.0.0.22000.1574%20(x64)/update.xml'
 				);
 				assert.lengthOf(result.updates.update, 1);
-				assert.propertyVal(result.updates.update[0].$, 'type', 'major');
-				//assert.isAbove(vcmp('7.1.0-beta.1+aaaaaaaa', result.updates.update[0].$.appVersion), 0);
-				assert.isAbove(vcmp('7.1-beta.1+aaaaaaaa', result.updates.update[0].$.appVersion), 0);
+				assert.propertyVal(result.updates.update[0].$, 'type', 'minor');
+				//assert.isAbove(vcmp('8.0.0-beta.1+aaaaaaaa', result.updates.update[0].$.appVersion), 0);
+				assert.isAbove(vcmp('8.0-beta.1+aaaaaaaa', result.updates.update[0].$.appVersion), 0);
 				assert.isBelow(vcmp('8.0.0-beta.1+aaaaaaaa', result.updates.update[0].$.appVersion), 0);
 				//assert.match(result.updates.update[0].$.appVersion, /7\.0\.[\d]+-beta/);
-				assert.match(result.updates.update[0].$.appVersion, /7\.1-beta/);
+				assert.match(result.updates.update[0].$.appVersion, /8\.0-beta/);
 			});
 			
-			it("should offer minor update to 7.1 beta from earlier 7.0 build", async function () {
+			it("should offer minor update to 8.0 beta from 7.0 build", async function () {
 				var result = await req(
-					url + '/7.0.5-beta.1%2Baaaaaaaa/20230304083433/WINNT_x86_64-msvc-x64/en-US/beta/Windows_NT%2010.0.0.0.22000.1574%20(x64)/update.xml'
+					url + '/7.0.0-beta.1%2Baaaaaaaa/20230304083433/WINNT_x86_64-msvc-x64/en-US/beta/Windows_NT%2010.0.0.0.22000.1574%20(x64)/update.xml'
 				);
 				assert.lengthOf(result.updates.update, 1);
-				assert.propertyVal(result.updates.update[0].$, 'type', 'major');
-				//assert.isAbove(vcmp('7.1.0-beta.1+aaaaaaaa', result.updates.update[0].$.appVersion), 0);
-				assert.isAbove(vcmp('7.1-beta.1+aaaaaaaa', result.updates.update[0].$.appVersion), 0);
+				assert.propertyVal(result.updates.update[0].$, 'type', 'minor');
+				//assert.isAbove(vcmp('8.0.0-beta.1+aaaaaaaa', result.updates.update[0].$.appVersion), 0);
+				assert.isAbove(vcmp('8.0-beta.1+aaaaaaaa', result.updates.update[0].$.appVersion), 0);
 				assert.isBelow(vcmp('8.0.0-beta.1+aaaaaaaa', result.updates.update[0].$.appVersion), 0);
 				//assert.match(result.updates.update[0].$.appVersion, /7\.0\.[\d]+-beta/);
-				assert.match(result.updates.update[0].$.appVersion, /7\.1-beta/);
+				assert.match(result.updates.update[0].$.appVersion, /8\.0-beta/);
+			});
+			
+			it("should offer minor update to 8.0 beta from earlier 8.0 build", async function () {
+				var result = await req(
+					url + '/8.0-beta.1%2Baaaaaaaa/20230304083433/WINNT_x86_64-msvc-x64/en-US/beta/Windows_NT%2010.0.0.0.22000.1574%20(x64)/update.xml'
+				);
+				assert.lengthOf(result.updates.update, 1);
+				assert.propertyVal(result.updates.update[0].$, 'type', 'minor');
+				//assert.isAbove(vcmp('8.0.0-beta.1+aaaaaaaa', result.updates.update[0].$.appVersion), 0);
+				assert.isAbove(vcmp('8.0-beta.1+aaaaaaaa', result.updates.update[0].$.appVersion), 0);
+				assert.isBelow(vcmp('8.0.0-beta.1+aaaaaaaa', result.updates.update[0].$.appVersion), 0);
+				//assert.match(result.updates.update[0].$.appVersion, /7\.0\.[\d]+-beta/);
+				assert.match(result.updates.update[0].$.appVersion, /8\.0-beta/);
 			});
 		});
 		
 		describe("Windows 32-bit", function () {
-			it("should offer minor update to 7.1 beta from earlier 7.1 build", async function () {
+			it("should offer minor update to 8.0 beta from earlier 8.0 build", async function () {
 				var result = await req(
-					url + '/7.1-beta.1%2Baaaaaaaa/20170521060737/WINNT_x86-msvc-x64/en-US/beta/Windows_NT%2010.0.0.0%20(x64)/update.xml'
+					url + '/8.0-beta.1%2Baaaaaaaa/20170521060737/WINNT_x86-msvc-x64/en-US/beta/Windows_NT%2010.0.0.0%20(x64)/update.xml'
 				);
 				assert.lengthOf(result.updates.update, 1);
 				assert.propertyVal(result.updates.update[0].$, 'type', 'minor');
-				//assert.isAbove(vcmp('7.1.0-beta.1+aaaaaaaa', result.updates.update[0].$.appVersion), 0);
-				assert.isAbove(vcmp('7.1-beta.1+aaaaaaaa', result.updates.update[0].$.appVersion), 0);
+				//assert.isAbove(vcmp('8.0.0-beta.1+aaaaaaaa', result.updates.update[0].$.appVersion), 0);
+				assert.isAbove(vcmp('8.0-beta.1+aaaaaaaa', result.updates.update[0].$.appVersion), 0);
 				assert.isBelow(vcmp('8.0.0-beta.1+aaaaaaaa', result.updates.update[0].$.appVersion), 0);
 				//assert.match(result.updates.update[0].$.appVersion, /7\.0\.[\d]+-beta/);
-				assert.match(result.updates.update[0].$.appVersion, /7\.1-beta/);
+				assert.match(result.updates.update[0].$.appVersion, /8\.0-beta/);
 			});
 			
-			it("should offer major update to 7.1 beta from 6.0 build", async function () {
+			it("should offer major update to 8.0 beta from 6.0 build", async function () {
 				var result = await req(
 					url + '/6.0-beta.202%2Bddc9989/20170521060737/WINNT_x86-msvc-x64/en-US/beta/Windows_NT%2010.0.0.0%20(x64)/update.xml'
 				);
 				assert.lengthOf(result.updates.update, 1);
-				//assert.isAbove(vcmp('7.1.0-beta.1+aaaaaaa', result.updates.update[0].$.appVersion), 0);
-				assert.isAbove(vcmp('7.1-beta.1+aaaaaaa', result.updates.update[0].$.appVersion), 0);
+				//assert.isAbove(vcmp('8.0.0-beta.1+aaaaaaa', result.updates.update[0].$.appVersion), 0);
+				assert.isAbove(vcmp('8.0-beta.1+aaaaaaa', result.updates.update[0].$.appVersion), 0);
 				assert.isBelow(vcmp('8.0.0-beta.1+aaaaaaa', result.updates.update[0].$.appVersion), 0);
 				assert.propertyVal(result.updates.update[0].$, 'type', 'major');
 				//assert.match(result.updates.update[0].$.appVersion, /7\.0\.[\d]+-beta/);
-				assert.match(result.updates.update[0].$.appVersion, /7\.1-beta/);
+				assert.match(result.updates.update[0].$.appVersion, /8\.0-beta/);
 			});
 		});
 	});
 	
 	describe.skip("test channel", function () {
 		describe("Mac", function () {
-			it("should offer major update to 7.1 beta from 6.0 build with ?force=1", async function () {
+			it("should offer major update to 8.0 beta from 6.0 build with ?force=1", async function () {
 				var result = await req(
 					url + '/6.0-test.202%2Baaaa/20230501021418/Darwin_x86_64-gcc3/en-US/test/Darwin%2022.4.0/update.xml?force=1'
 				);
 				assert.lengthOf(result.updates.update, 1);
 				assert.propertyVal(result.updates.update[0].$, 'type', 'major');
-				assert.isAbove(vcmp('7.1.0-test.1+aaaaaaaa', result.updates.update[0].$.appVersion), 0);
+				assert.isAbove(vcmp('8.0.0-test.1+aaaaaaaa', result.updates.update[0].$.appVersion), 0);
 				assert.isBelow(vcmp('8.0.0-test.1+aaaaaaaa', result.updates.update[0].$.appVersion), 0);
 				//assert.match(result.updates.update[0].$.appVersion, /7\.0\.[\d]+-test/);
-				assert.match(result.updates.update[0].$.appVersion, /7\.1-test/);
+				assert.match(result.updates.update[0].$.appVersion, /8\.0-test/);
 				assert.include(result.updates.update[0].patch[0].$.URL, '_bz_');
 			});
 			
@@ -325,10 +356,10 @@ describe("Updates", function () {
 				);
 				assert.lengthOf(result.updates.update, 1);
 				assert.propertyVal(result.updates.update[0].$, 'type', 'minor');
-				assert.isAbove(vcmp('7.1.0-test.1+aaaaaaaa', result.updates.update[0].$.appVersion), 0);
+				assert.isAbove(vcmp('8.0.0-test.1+aaaaaaaa', result.updates.update[0].$.appVersion), 0);
 				assert.isBelow(vcmp('8.0.0-test.1+aaaaaaaa', result.updates.update[0].$.appVersion), 0);
 				//assert.match(result.updates.update[0].$.appVersion, /7\.0\.[\d]+-test/);
-				assert.match(result.updates.update[0].$.appVersion, /7\.1-test/);
+				assert.match(result.updates.update[0].$.appVersion, /8\.0-test/);
 				assert.notInclude(result.updates.update[0].patch[0].$.URL, '_bz_');
 			});
 		});
