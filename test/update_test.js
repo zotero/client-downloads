@@ -75,7 +75,7 @@ describe("Updates", function () {
 			
 			it("shouldn't show updates past Zotero 6 for 10.11 users", async function () {
 				var xml = await rp({
-					uri: url + '/6.0.25/20230420171544/Darwin_x86_64-gcc3/en-US/release/Darwin%2015.6.0/update.xml?force=1',
+					uri: url + '/6.0.25/20230420171544/Darwin_x86_64-gcc3/en-US/release/Darwin%2015.6.0/update.xml',
 					headers: {
 						'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:60.0) Gecko/20100101 Zotero/6.0.25'
 					}
@@ -88,7 +88,7 @@ describe("Updates", function () {
 			
 			it("should show updates past Zotero 6 for 10.12 users", async function () {
 				var xml = await rp({
-					uri: url + '/6.0.25/20230420171544/Darwin_x86_64-gcc3/en-US/release/Darwin%2015.6.0/update.xml?force=1',
+					uri: url + '/6.0.25/20230420171544/Darwin_x86_64-gcc3/en-US/release/Darwin%2015.6.0/update.xml',
 					headers: {
 						'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:60.0) Gecko/20100101 Zotero/6.0.25'
 					}
