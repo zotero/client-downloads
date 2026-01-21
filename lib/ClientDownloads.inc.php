@@ -284,42 +284,64 @@ class ClientDownloads {
 			}
 		}
 		
-		// Serve Z6 for automatic updates from <7.0 for now
-		if (!$manual && $channel == 'release' && preg_match('/^[123456]\./', $fromVersion)) {
+		// Serve Z7 for automatic updates from <8.0 for now
+		if (!$manual && $channel == 'release' && preg_match('/^[1234567]\./', $fromVersion)) {
+			// Staged rollout
+			/*$hash = hash('sha256', $_SERVER['REMOTE_ADDR'] . $_SERVER["HTTP_USER_AGENT"]);
+			$firstBytes = substr($hash, 0, 8); // First 4 bytes = 8 hex chars
+			$intVal = hexdec($firstBytes);
+			$maxVal = 0xFFFFFFFF;
+			$value = $intVal / $maxVal;
+			if ($value < 0.05) {
+				return false;
+			}*/
+			
 			switch ($os) {
 				case 'mac':
 					return [
-						"major" => false,
-						"version" => "6.0.37",
-						"detailsURL" => "https://www.zotero.org/support/6.0_changelog",
-						"buildID" => "20240319052808"
+						"version" => "7.0.32",
+						"detailsURL" => "https://www.zotero.org/support/7.0_changelog",
+						"buildID" => "20260114151045"
 					];
 					break;
 				
 				case 'win32':
 					return [
-						"major" => false,
-						"version" => "6.0.36",
-						"detailsURL" => "https://www.zotero.org/support/6.0_changelog",
-						"buildID" => "20240313202508"
+						"version" => "7.0.32",
+						"detailsURL" => "https://www.zotero.org/support/7.0_changelog",
+						"buildID" => "20260114201345"
+					];
+					break;
+				
+				case 'win-x64':
+					return [
+						"version" => "7.0.32",
+						"detailsURL" => "https://www.zotero.org/support/7.0_changelog",
+						"buildID" => "20260114201345"
+					];
+					break;
+				
+				case 'win-arm64':
+					return [
+						"version" => "7.0.32",
+						"detailsURL" => "https://www.zotero.org/support/7.0_changelog",
+						"buildID" => "20260114201345"
 					];
 					break;
 				
 				case 'linux-i686':
 					return [
-						"major" => false,
-						"version" => "6.0.35",
-						"detailsURL" => "https://www.zotero.org/support/6.0_changelog",
-						"buildID" => "20240304070404"
+						"version" => "7.0.32",
+						"detailsURL" => "https://www.zotero.org/support/7.0_changelog",
+						"buildID" => "20260114201030"
 					];
 					break;
 				
 				case 'linux-x86_64':
 					return [
-						"major" => false,
-						"version" => "6.0.35",
-						"detailsURL" => "https://www.zotero.org/support/6.0_changelog",
-						"buildID" => "20240304070404"
+						"version" => "7.0.32",
+						"detailsURL" => "https://www.zotero.org/support/7.0_changelog",
+						"buildID" => "20260114201030"
 					];
 					break;
 			}
