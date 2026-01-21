@@ -230,26 +230,58 @@ class ClientDownloads {
 	 * Return a specific build for some versions
 	 */
 	private function getBuildOverride($channel, $os, $osVersion, $fromVersion, $manual) {
-		// Don't serve past 5.0.77 for Vista or earlier
-		if (strpos($osVersion, "Windows_NT 5.") === 0
-				|| strpos($osVersion, "Windows_NT 6.0") === 0) {
-			return [
-				"major" => !!preg_match('/^[1234]\./', $fromVersion),
-				"version" => "5.0.77",
-				"detailsURL" => "https://www.zotero.org/support/5.0_changelog",
-				"buildID" => "20191031072159"
-			];
+		// TODO: Switch to real str_starts_with()
+		if ($this->str_starts_with($os, "win")) {
+			// Don't serve past 5.0.77 for Vista or earlier
+			if ($this->str_starts_with($osVersion, "Windows_NT 5.")
+					|| $this->str_starts_with($osVersion, "Windows_NT 6.0")) {
+				return [
+					"major" => !!preg_match('/^[1234]\./', $fromVersion),
+					"version" => "5.0.77",
+					"detailsURL" => "https://www.zotero.org/support/5.0_changelog",
+					"buildID" => "20191031072159"
+				];
+			}
 		}
-		// Don't serve past 6.0.37 for macOS 10.9-10.11
-		if ($os == 'mac'
-				&& isset($_SERVER['HTTP_USER_AGENT'])
-				&& preg_match('/OS X 10\.(9|10|11);/', $_SERVER["HTTP_USER_AGENT"])) {
-			return [
-				"major" => !!preg_match('/^[12345]\./', $fromVersion),
-				"version" => "6.0.37",
-				"detailsURL" => "https://www.zotero.org/support/6.0_changelog",
-				"buildID" => "20240319052808"
-			];
+		else if ($os == 'mac') {
+			// Don't serve past 6.0.37 for macOS 10.9-10.11
+			if (isset($_SERVER['HTTP_USER_AGENT'])
+					&& preg_match('/OS X 10\.(9|10|11);/', $_SERVER["HTTP_USER_AGENT"])) {
+				return [
+					"major" => !!preg_match('/^[12345]\./', $fromVersion),
+					"version" => "6.0.37",
+					"detailsURL" => "https://www.zotero.org/support/6.0_changelog",
+					"buildID" => "20240319052808"
+				];
+			}
+			
+			// TEMP? "Darwin%2018.2.0"
+			$osVersion = urldecode($osVersion);
+			list($_, $darwinVersion) = explode(' ', $osVersion);
+			list($darwinMajorVersion) = explode('.', $darwinVersion);
+			
+			// Don't serve past 7.0/7.1 beta for 10.14 Mojave or earlier
+			if ($darwinMajorVersion <= 18) {
+				/*if ($channel == 'release') {
+					return [
+						"major" => !!preg_match('/^[12345]\./', $fromVersion),
+						"version" => "7.0.22",
+						"detailsURL" => "https://www.zotero.org/support/7.0_changelog",
+						"buildID" => "20250725113910"
+					];
+				}
+				else */if ($channel == 'beta') {
+					return [
+						"major" => false,
+						"version" => "7.1-beta.48+735922a2b",
+						"detailsURL" => "https://www.zotero.org/support/7.0_changelog",
+						"buildID" => "20250724122241"
+					];
+				}
+				/*else {
+					return false;
+				}*/
+			}
 		}
 		
 		// Serve Z6 for automatic updates from <7.0 for now
