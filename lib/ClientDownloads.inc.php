@@ -119,7 +119,10 @@ class ClientDownloads {
 		// If not explicitly set as major or minor, it's minor if the first 3 characters in the
 		// version haven't changed
 		else {
-			$isMinor = !strncmp($build["version"], $fromVersion, 3);
+			// TEMP: Don't consider 7.0/7.1 → 8.0 a major upgrade, since they don't know how to prompt
+			//$isMinor = !strncmp($build["version"], $fromVersion, 3);
+			$isMinor = !strncmp($build["version"], $fromVersion, 2)
+				|| (preg_match('/^7\.[01]/', $fromVersion) && $this->str_starts_with($build["version"], '8.0'));
 		}
 		$type = $isMinor ? "minor" : "major";
 		
