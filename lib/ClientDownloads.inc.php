@@ -242,6 +242,34 @@ class ClientDownloads {
 					"buildID" => "20191031072159"
 				];
 			}
+			// Don't serve past 7.0.32 for Windows <10
+			else if (preg_match('/^Windows_NT (\d+)\./', $osVersion, $m) && (int)$m[1] < 10) {
+				switch ($os) {
+					case 'win32':
+						return [
+							"version" => "7.0.32",
+							"detailsURL" => "https://www.zotero.org/support/7.0_changelog",
+							"buildID" => "20260114201345"
+						];
+						break;
+					
+					case 'win-arm64':
+						return [
+							"version" => "7.0.32",
+							"detailsURL" => "https://www.zotero.org/support/7.0_changelog",
+							"buildID" => "20260114201345"
+						];
+						break;
+					
+					// win-x64
+					default:
+						return [
+							"version" => "7.0.32",
+							"detailsURL" => "https://www.zotero.org/support/7.0_changelog",
+							"buildID" => "20260114201345"
+						];
+				}
+			}
 		}
 		else if ($os == 'mac') {
 			// Don't serve past 6.0.37 for macOS 10.9-10.11

@@ -144,6 +144,18 @@ describe("Updates", function () {
 				assert.propertyVal(result.updates.update[0].$, 'type', 'major');
 				assert.equal(result.updates.update[0].$.appVersion, '5.0.77');
 			});
+			
+			it("shouldn't show updates past Zotero 7.0.32 for Windows 7 users", async function () {
+				var xml = await rp({
+					uri: url + '/7.0.30/20251120212253/WINNT_x86_64-msvc-x64/en-US/release/Windows_NT%206.1.0.0.7600%20(x64)/update.xml?force=1',
+					headers: {
+						'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:115.0) Gecko/20100101 Zotero/7.0.31'
+					}
+				});
+				var result = await parseXML(xml);
+				assert.lengthOf(result.updates.update, 1);
+				assert.strictEqual(result.updates.update[0].$.appVersion, '7.0.32');
+			});
 		});
 		
 		describe("Linux", function () {
