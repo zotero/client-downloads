@@ -73,6 +73,22 @@ class ClientDownloads {
 			}
 		}
 		
+		if (!empty($_SERVER['HTTP_UPDATER_FIXED'])) {
+			error_log("Received Updater-Fixed request");
+		}
+		// Don't serve updates for 7.0.16 on Windows or 7.0.16/18 on Linux,
+		// since they have a broken updater
+		else {
+			if (preg_match("/^win/", $os) && $channel == 'release' && $fromVersion == '7.0.16') {
+				return [];
+			}
+			if (preg_match("/^linux/", $os)
+					&& $channel == 'release'
+					&& ($fromVersion == '7.0.16' || $fromVersion == '7.0.18')) {
+				return [];
+			}
+		}
+		
 		// Already on latest (or higher) version
 		if (\ToolkitVersionComparator::compare($fromVersion, $build['version']) >= 0) {
 			return $updates;
