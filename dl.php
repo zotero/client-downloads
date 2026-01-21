@@ -47,7 +47,14 @@ case 'mac':
 case 'linux-i686':
 case 'linux-arm64':
 case 'linux-x86_64':
-	$filename = "Zotero-{$version}_$platform.tar.bz2";
+	// 8.0 and later use xz
+	if (\ToolkitVersionComparator::compare('7.999', $version) < 0) {
+		$fileExt = "xz";
+	}
+	else {
+		$fileExt = "bz2";
+	}
+	$filename = "Zotero-{$version}_$platform.tar.$fileExt";
 	break;
 
 case 'win-x64':
