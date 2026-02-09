@@ -224,6 +224,12 @@ class ClientDownloads {
 	
 	public function getBuildVersion($channel, $platform) {
 		$builds = $this->getBuilds($channel, $platform);
+		// TEMP: Don't serve 8.0 yet
+		/*if ($channel == 'release' && (!isset($GLOBALS['TEST_IPS']) || !in_array($_SERVER['REMOTE_ADDR'], $GLOBALS['TEST_IPS']))) {
+			$builds = array_values(array_filter($builds, function ($build) {
+				return !$this->str_starts_with($build['version'], '8.');
+			}));
+		}*/
 		$build = array_pop($builds);
 		return $build ? $build['version'] : false;
 	}
@@ -313,66 +319,116 @@ class ClientDownloads {
 			}
 		}
 		
-		// Serve Z7 for automatic updates from <8.0 for now
-		if (!$manual && $channel == 'release' && preg_match('/^[1234567]\./', $fromVersion)) {
-			// Staged rollout
-			/*$hash = hash('sha256', $_SERVER['REMOTE_ADDR'] . $_SERVER["HTTP_USER_AGENT"]);
-			$firstBytes = substr($hash, 0, 8); // First 4 bytes = 8 hex chars
-			$intVal = hexdec($firstBytes);
-			$maxVal = 0xFFFFFFFF;
-			$value = $intVal / $maxVal;
-			if ($value < 0.05) {
-				return false;
-			}*/
+		if ($channel == 'release') {
+			// Don't serve past Z7 for Z6 or earlier, since they can't apply the Z8 update
+			if (preg_match('/^[123456]\./', $fromVersion)) {
+				switch ($os) {
+					case 'mac':
+						return [
+							"version" => "7.0.32",
+							"detailsURL" => "https://www.zotero.org/support/7.0_changelog",
+							"buildID" => "20260114151045"
+						];
+						break;
+					
+					case 'win32':
+						return [
+							"version" => "7.0.32",
+							"detailsURL" => "https://www.zotero.org/support/7.0_changelog",
+							"buildID" => "20260114201345"
+						];
+						break;
+					
+					case 'linux-i686':
+						return [
+							"version" => "7.0.32",
+							"detailsURL" => "https://www.zotero.org/support/7.0_changelog",
+							"buildID" => "20260114201030"
+						];
+						break;
+					
+					case 'linux-x86_64':
+						return [
+							"version" => "7.0.32",
+							"detailsURL" => "https://www.zotero.org/support/7.0_changelog",
+							"buildID" => "20260114201030"
+						];
+						break;
+				}
+			}
 			
-			switch ($os) {
-				case 'mac':
-					return [
-						"version" => "7.0.32",
-						"detailsURL" => "https://www.zotero.org/support/7.0_changelog",
-						"buildID" => "20260114151045"
-					];
-					break;
+			if (preg_match('/^[7]\./', $fromVersion)) {
+				// TEMP: Remove to push Z8 to everyone
+				//return false;
 				
-				case 'win32':
-					return [
-						"version" => "7.0.32",
-						"detailsURL" => "https://www.zotero.org/support/7.0_changelog",
-						"buildID" => "20260114201345"
-					];
-					break;
+				// Serve 7.0.32 for automatic updates from Z7 for now
+				if ($manual) {
+					return false;
+				}
 				
-				case 'win-x64':
-					return [
-						"version" => "7.0.32",
-						"detailsURL" => "https://www.zotero.org/support/7.0_changelog",
-						"buildID" => "20260114201345"
-					];
-					break;
+				if (isset($GLOBALS['TEST_IPS']) && in_array($_SERVER['REMOTE_ADDR'], $GLOBALS['TEST_IPS'])) {
+					//return false;
+				}
 				
-				case 'win-arm64':
-					return [
-						"version" => "7.0.32",
-						"detailsURL" => "https://www.zotero.org/support/7.0_changelog",
-						"buildID" => "20260114201345"
-					];
-					break;
+				// Staged rollout
+				/*$hash = hash('sha256', $_SERVER['REMOTE_ADDR'] . $_SERVER["HTTP_USER_AGENT"]);
+				$firstBytes = substr($hash, 0, 8); // First 4 bytes = 8 hex chars
+				$intVal = hexdec($firstBytes);
+				$maxVal = 0xFFFFFFFF;
+				$value = $intVal / $maxVal;
+				if ($value < 0.05) {
+					return false;
+				}*/
 				
-				case 'linux-i686':
-					return [
-						"version" => "7.0.32",
-						"detailsURL" => "https://www.zotero.org/support/7.0_changelog",
-						"buildID" => "20260114201030"
-					];
-					break;
-				
-				case 'linux-x86_64':
-					return [
-						"version" => "7.0.32",
-						"detailsURL" => "https://www.zotero.org/support/7.0_changelog",
-						"buildID" => "20260114201030"
-					];
-					break;
+				switch ($os) {
+					case 'mac':
+						return [
+							"version" => "7.0.32",
+							"detailsURL" => "https://www.zotero.org/support/7.0_changelog",
+							"buildID" => "20260114151045"
+						];
+						break;
+					
+					case 'win32':
+						return [
+							"version" => "7.0.32",
+							"detailsURL" => "https://www.zotero.org/support/7.0_changelog",
+							"buildID" => "20260114201345"
+						];
+						break;
+					
+					case 'win-x64':
+						return [
+							"version" => "7.0.32",
+							"detailsURL" => "https://www.zotero.org/support/7.0_changelog",
+							"buildID" => "20260114201345"
+						];
+						break;
+					
+					case 'win-arm64':
+						return [
+							"version" => "7.0.32",
+							"detailsURL" => "https://www.zotero.org/support/7.0_changelog",
+							"buildID" => "20260114201345"
+						];
+						break;
+					
+					case 'linux-i686':
+						return [
+							"version" => "7.0.32",
+							"detailsURL" => "https://www.zotero.org/support/7.0_changelog",
+							"buildID" => "20260114201030"
+						];
+						break;
+					
+					case 'linux-x86_64':
+						return [
+							"version" => "7.0.32",
+							"detailsURL" => "https://www.zotero.org/support/7.0_changelog",
+							"buildID" => "20260114201030"
+						];
+						break;
+				}
 			}
 		}
 		return false;
