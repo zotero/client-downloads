@@ -3,6 +3,9 @@ namespace Zotero;
 require('ToolkitVersionComparator.inc.php');
 
 class ClientDownloads {
+	private $manifestsDir;
+	private $host;
+	
 	private $channels = [
 		'release', 'beta', 'dev', 'test'
 	];
