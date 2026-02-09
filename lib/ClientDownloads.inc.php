@@ -59,9 +59,13 @@ class ClientDownloads {
 		}
 		
 		// Check for a specific build for this version
-		$buildOverride = $this->getBuildOverride($channel, $os, $clientInfo['osVersion'], $fromVersion, $clientInfo['manual']);
-		if ($buildOverride) {
-			$build = $buildOverride;
+		$overrideVersion = $this->getVersionOverride($channel, $os, $clientInfo['osVersion'], $fromVersion, $clientInfo['manual']);
+		if ($overrideVersion) {
+			$build = $this->getBuildForVersion($channel, $os, $overrideVersion);
+			if (!$build) {
+				error_log("Build data not found for override $overrideVersion on $channel/$os");
+				return [];
+			}
 		}
 		else {
 			// Find the latest build for this channel and OS
@@ -236,140 +240,66 @@ class ClientDownloads {
 	
 	
 	/**
-	 * Return a specific build for some versions
+	 * Return a version to cap updates at for certain OS/version combinations
 	 */
-	private function getBuildOverride($channel, $os, $osVersion, $fromVersion, $manual) {
+	private function getVersionOverride($channel, $os, $osVersion, $fromVersion, $manual) {
 		// TODO: Switch to real str_starts_with()
 		if ($this->str_starts_with($os, "win")) {
 			// Don't serve past 5.0.77 for Vista or earlier
 			if ($this->str_starts_with($osVersion, "Windows_NT 5.")
 					|| $this->str_starts_with($osVersion, "Windows_NT 6.0")) {
-				return [
-					"major" => !!preg_match('/^[1234]\./', $fromVersion),
-					"version" => "5.0.77",
-					"detailsURL" => "https://www.zotero.org/support/5.0_changelog",
-					"buildID" => "20191031072159"
-				];
+				return "5.0.77";
 			}
 			// Don't serve past 7.0.32 for Windows <10
-			else if (preg_match('/^Windows_NT (\d+)\./', $osVersion, $m) && (int)$m[1] < 10) {
-				switch ($os) {
-					case 'win32':
-						return [
-							"version" => "7.0.32",
-							"detailsURL" => "https://www.zotero.org/support/7.0_changelog",
-							"buildID" => "20260114201345"
-						];
-						break;
-					
-					case 'win-arm64':
-						return [
-							"version" => "7.0.32",
-							"detailsURL" => "https://www.zotero.org/support/7.0_changelog",
-							"buildID" => "20260114201345"
-						];
-						break;
-					
-					// win-x64
-					default:
-						return [
-							"version" => "7.0.32",
-							"detailsURL" => "https://www.zotero.org/support/7.0_changelog",
-							"buildID" => "20260114201345"
-						];
-				}
+			if (preg_match('/^Windows_NT (\d+)\./', $osVersion, $m) && (int)$m[1] < 10) {
+				return "7.0.32";
 			}
 		}
 		else if ($os == 'mac') {
 			// Don't serve past 6.0.37 for macOS 10.9-10.11
 			if (isset($_SERVER['HTTP_USER_AGENT'])
 					&& preg_match('/OS X 10\.(9|10|11);/', $_SERVER["HTTP_USER_AGENT"])) {
-				return [
-					"major" => !!preg_match('/^[12345]\./', $fromVersion),
-					"version" => "6.0.37",
-					"detailsURL" => "https://www.zotero.org/support/6.0_changelog",
-					"buildID" => "20240319052808"
-				];
+				return "6.0.37";
 			}
-			
+
 			// TEMP? "Darwin%2018.2.0"
 			$osVersion = urldecode($osVersion);
 			list($_, $darwinVersion) = explode(' ', $osVersion);
 			list($darwinMajorVersion) = explode('.', $darwinVersion);
-			
+
 			// Don't serve past 7.0.32 for 10.14 Mojave or earlier
 			if ($darwinMajorVersion <= 18) {
 				if ($channel == 'release') {
-					return [
-						"version" => "7.0.32",
-						"detailsURL" => "https://www.zotero.org/support/7.0_changelog",
-						"buildID" => "20260114151045"
-					];
+					return "7.0.32";
 				}
 				else if ($channel == 'beta') {
-					return [
-						"version" => "7.1-beta.48+735922a2b",
-						"detailsURL" => "https://www.zotero.org/support/7.0_changelog",
-						"buildID" => "20250724122241"
-					];
+					return "7.1-beta.48+735922a2b";
 				}
 				else {
 					return false;
 				}
 			}
 		}
-		
+
 		if ($channel == 'release') {
 			// Don't serve past Z7 for Z6 or earlier, since they can't apply the Z8 update
 			if (preg_match('/^[123456]\./', $fromVersion)) {
-				switch ($os) {
-					case 'mac':
-						return [
-							"version" => "7.0.32",
-							"detailsURL" => "https://www.zotero.org/support/7.0_changelog",
-							"buildID" => "20260114151045"
-						];
-						break;
-					
-					case 'win32':
-						return [
-							"version" => "7.0.32",
-							"detailsURL" => "https://www.zotero.org/support/7.0_changelog",
-							"buildID" => "20260114201345"
-						];
-						break;
-					
-					case 'linux-i686':
-						return [
-							"version" => "7.0.32",
-							"detailsURL" => "https://www.zotero.org/support/7.0_changelog",
-							"buildID" => "20260114201030"
-						];
-						break;
-					
-					case 'linux-x86_64':
-						return [
-							"version" => "7.0.32",
-							"detailsURL" => "https://www.zotero.org/support/7.0_changelog",
-							"buildID" => "20260114201030"
-						];
-						break;
-				}
+				return "7.0.32";
 			}
-			
+
 			if (preg_match('/^[7]\./', $fromVersion)) {
 				// TEMP: Remove to push Z8 to everyone
 				//return false;
-				
+
 				// Serve 7.0.32 for automatic updates from Z7 for now
 				if ($manual) {
 					return false;
 				}
-				
+
 				if (isset($GLOBALS['TEST_IPS']) && in_array($_SERVER['REMOTE_ADDR'], $GLOBALS['TEST_IPS'])) {
 					//return false;
 				}
-				
+
 				// Staged rollout
 				/*$hash = hash('sha256', $_SERVER['REMOTE_ADDR'] . $_SERVER["HTTP_USER_AGENT"]);
 				$firstBytes = substr($hash, 0, 8); // First 4 bytes = 8 hex chars
@@ -379,56 +309,8 @@ class ClientDownloads {
 				if ($value < 0.05) {
 					return false;
 				}*/
-				
-				switch ($os) {
-					case 'mac':
-						return [
-							"version" => "7.0.32",
-							"detailsURL" => "https://www.zotero.org/support/7.0_changelog",
-							"buildID" => "20260114151045"
-						];
-						break;
-					
-					case 'win32':
-						return [
-							"version" => "7.0.32",
-							"detailsURL" => "https://www.zotero.org/support/7.0_changelog",
-							"buildID" => "20260114201345"
-						];
-						break;
-					
-					case 'win-x64':
-						return [
-							"version" => "7.0.32",
-							"detailsURL" => "https://www.zotero.org/support/7.0_changelog",
-							"buildID" => "20260114201345"
-						];
-						break;
-					
-					case 'win-arm64':
-						return [
-							"version" => "7.0.32",
-							"detailsURL" => "https://www.zotero.org/support/7.0_changelog",
-							"buildID" => "20260114201345"
-						];
-						break;
-					
-					case 'linux-i686':
-						return [
-							"version" => "7.0.32",
-							"detailsURL" => "https://www.zotero.org/support/7.0_changelog",
-							"buildID" => "20260114201030"
-						];
-						break;
-					
-					case 'linux-x86_64':
-						return [
-							"version" => "7.0.32",
-							"detailsURL" => "https://www.zotero.org/support/7.0_changelog",
-							"buildID" => "20260114201030"
-						];
-						break;
-				}
+
+				return "7.0.32";
 			}
 		}
 		return false;
@@ -436,20 +318,51 @@ class ClientDownloads {
 	
 	
 	/**
+	 * Resolve a version string to full build data (version, buildID, detailsURL)
+	 *
+	 * Looks for a build-{os}.json file in the manifest folder first, then falls back to scanning
+	 * updates-{platform}.json
+	 */
+	private function getBuildForVersion($channel, $os, $version) {
+		$shortOS = preg_replace('/^(mac|win|linux).+/', "$1", $os);
+		$buildFile = $this->manifestsDir . '/' . $channel . '/' . $version . '/build-' . $shortOS . '.json';
+		if (file_exists($buildFile)) {
+			$data = json_decode(file_get_contents($buildFile), true);
+			if ($data && isset($data['buildID']) && isset($data['detailsURL'])) {
+				return [
+					"version" => $version,
+					"buildID" => $data['buildID'],
+					"detailsURL" => $data['detailsURL']
+				];
+			}
+		}
+
+		// Fall back to scanning updates-{platform}.json
+		$builds = $this->getBuilds($channel, $os);
+		if ($builds) {
+			foreach ($builds as $build) {
+				if ($build['version'] === $version) {
+					return $build;
+				}
+			}
+		}
+
+		return false;
+	}
+
+
+	/**
 	 * Return hard-coded update data for some versions
 	 *
-	 * Unlike getBuildOverride(), which specifies a version to use the existing update data from,
+	 * Unlike getVersionOverride(), which specifies a version to use the existing update data from,
 	 * this specifies the exact update data to use.
 	 */
 	private function getUpdateDataOverride($channel, $os, $fromVersion) {
-		// Check for fixed updates
 		if ($os == 'mac') {
 			if ($channel == 'release') {
 				// Don't show updates past 4.0.29.11 for 10.6-10.8 users
 				if (isset($_SERVER['HTTP_USER_AGENT'])
-						&& (strpos($_SERVER["HTTP_USER_AGENT"], "OS X 10.6;") !== false
-						|| strpos($_SERVER["HTTP_USER_AGENT"], "OS X 10.7;") !== false
-						|| strpos($_SERVER["HTTP_USER_AGENT"], "OS X 10.8;") !== false)) {
+						&& preg_match('/OS X 10\.(6|7|8);/', $_SERVER["HTTP_USER_AGENT"])) {
 					return [
 						'type' => 'minor',
 						'version' => '4.0.29.11',
@@ -466,7 +379,7 @@ class ClientDownloads {
 						]
 					];
 				}
-				
+
 				switch ($fromVersion) {
 					case '4.0.28.6':
 					case '4.0.28.7':
@@ -490,29 +403,8 @@ class ClientDownloads {
 				}
 				return;
 			}
-			/*if ($channel == 'beta') {
-				// Don't show updates past 6.0.27-beta.3 for 10.11 users
-				if (isset($_SERVER['HTTP_USER_AGENT'])
-						&& (strpos($_SERVER["HTTP_USER_AGENT"], "OS X 10.11;") !== false) {
-					return [
-						'type' => 'minor',
-						'version' => '6.0.27-beta.3+3e12f3f20',
-						'buildID' => '20230501021418',
-						'detailsURL' => 'http://www.zotero.org/support/6.0_changelog',
-						'patches' => [
-							[
-								'type' => 'complete',
-								'URL' => $this->getBaseURI('beta', '6.0.27-beta.3+3e12f3f20') . 'Zotero-6.0.27-beta.3+3e12f3f20-full_mac.mar',
-								'hashFunction' => 'SHA512',
-								'hashValue' => '73d6790fde9f4bafdc6772a809695b109fc4ebc7e4490108a1e2025f5995c0f55401acbd365f2ccfca3299900f091704ce32c3f54572e64f43e3935ac3d642a4',
-								'size' => 73649457
-							]
-						]
-					];
-				}
-			}*/
 		}
-		
+
 		return false;
 	}
 	
