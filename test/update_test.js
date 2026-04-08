@@ -48,7 +48,7 @@ describe("Updates", function () {
 				assert.isBelow(vcmp('7.0', result.updates.update[0].$.appVersion), 0);
 			});*/
 			
-			// TEMP: Z7 users are capped at 7.0.32 for auto-updates
+			// Z7 users are capped at 7.0.32 for auto-updates (via update-policy.json)
 			it("should offer minor update to 7.0.32 from 7.0 build", async function () {
 				var result = await req(
 					url + '/7.0.12/20250219041724/Darwin_aarch64-gcc3/en-US/release/Darwin%2024.4.0/update.xml'
@@ -56,6 +56,33 @@ describe("Updates", function () {
 				assert.lengthOf(result.updates.update, 1);
 				assert.propertyVal(result.updates.update[0].$, 'type', 'minor');
 				assert.equal(result.updates.update[0].$.appVersion, '7.0.32');
+			});
+
+			it("should offer latest update from 7.0 build with manual update", async function () {
+				var result = await req(
+					url + '/7.0.12/20250219041724/Darwin_aarch64-gcc3/en-US/release/Darwin%2024.4.0/update.xml?force=1'
+				);
+				assert.lengthOf(result.updates.update, 1);
+				assert.notEqual(result.updates.update[0].$.appVersion, '7.0.32');
+			});
+
+			// Z8 users are capped for auto-updates (via update-policy.json)
+			it("should cap auto-update from 8.0 build", async function () {
+				var result = await req(
+					url + '/8.0/20260121141007/Darwin_aarch64-gcc3/en-US/release/Darwin%2024.4.0/update.xml'
+				);
+				assert.lengthOf(result.updates.update, 1);
+				assert.propertyVal(result.updates.update[0].$, 'type', 'minor');
+				assert.equal(result.updates.update[0].$.appVersion, '8.0.5');
+			});
+
+			// TODO: Verify version is past the cap once 9.0 manifests are available
+			it("should offer latest update from 8.0 build with manual update", async function () {
+				var result = await req(
+					url + '/8.0/20260121141007/Darwin_aarch64-gcc3/en-US/release/Darwin%2024.4.0/update.xml?force=1'
+				);
+				assert.lengthOf(result.updates.update, 1);
+				assert.propertyVal(result.updates.update[0].$, 'type', 'minor');
 			});
 			
 			it("shouldn't show updates past 4.0.29.11 for 10.6-10.8 users", async function () {
@@ -127,7 +154,7 @@ describe("Updates", function () {
 				assert.match(complete.$.URL, /https:\/\/.+\/7\.0\.32\/Zotero-7\.0\.32-full_bz_win32.mar/);
 			});
 			
-			// TEMP: Z7 users are capped at 7.0.32 for auto-updates
+			// Z7 users are capped at 7.0.32 for auto-updates (via update-policy.json)
 			it("should offer minor update to 7.0.32 from 7.0 build", async function () {
 				var result = await req(
 					url + '/7.0.13/20250221064410/WINNT_x86_64-msvc-x64/en-US/release/Windows_NT%2010.0.0.0.26100.3775%20(x64)/update.xml'
@@ -135,6 +162,25 @@ describe("Updates", function () {
 				assert.lengthOf(result.updates.update, 1);
 				assert.propertyVal(result.updates.update[0].$, 'type', 'minor');
 				assert.equal(result.updates.update[0].$.appVersion, '7.0.32');
+			});
+
+			// Z8 users are capped for auto-updates (via update-policy.json)
+			it("should cap auto-update from 8.0 build", async function () {
+				var result = await req(
+					url + '/8.0/20260121141007/WINNT_x86_64-msvc-x64/en-US/release/Windows_NT%2010.0.0.0.26100.3775%20(x64)/update.xml'
+				);
+				assert.lengthOf(result.updates.update, 1);
+				assert.propertyVal(result.updates.update[0].$, 'type', 'minor');
+				assert.equal(result.updates.update[0].$.appVersion, '8.0.4');
+			});
+
+			// TODO: Verify version is past the cap once 9.0 manifests are available
+			it("should offer latest update from 8.0 build with manual update", async function () {
+				var result = await req(
+					url + '/8.0/20260121141007/WINNT_x86_64-msvc-x64/en-US/release/Windows_NT%2010.0.0.0.26100.3775%20(x64)/update.xml?force=1'
+				);
+				assert.lengthOf(result.updates.update, 1);
+				assert.propertyVal(result.updates.update[0].$, 'type', 'minor');
 			});
 			
 			it("should offer minor update to 5.0.77 for Zotero 5 on Windows XP", async function () {
@@ -178,7 +224,7 @@ describe("Updates", function () {
 				assert.equal(result.updates.update[0].$.appVersion, '7.0.32');
 			});
 			
-			// TEMP: Z7 users are capped at 7.0.32 for auto-updates
+			// Z7 users are capped at 7.0.32 for auto-updates (via update-policy.json)
 			it("should offer minor update to 7.0.32 from 7.0 build", async function () {
 				var result = await req(
 					url + '/7.0.10/20241126084514/Linux_x86_64-gcc3/en-US/release/Linux%206.2.0-32-generic%20(GTK%203.24.33%2Clibpulse%2015.99.0)/update.xml'
@@ -186,6 +232,16 @@ describe("Updates", function () {
 				assert.lengthOf(result.updates.update, 1);
 				assert.propertyVal(result.updates.update[0].$, 'type', 'minor');
 				assert.equal(result.updates.update[0].$.appVersion, '7.0.32');
+			});
+
+			// Z8 users are capped for auto-updates (via update-policy.json)
+			it("should cap auto-update from 8.0 build", async function () {
+				var result = await req(
+					url + '/8.0/20260121141007/Linux_x86_64-gcc3/en-US/release/Linux%206.2.0-32-generic%20(GTK%203.24.33%2Clibpulse%2015.99.0)/update.xml'
+				);
+				assert.lengthOf(result.updates.update, 1);
+				assert.propertyVal(result.updates.update[0].$, 'type', 'minor');
+				assert.equal(result.updates.update[0].$.appVersion, '8.0.4');
 			});
 		});
 	});

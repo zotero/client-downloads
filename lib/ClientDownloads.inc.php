@@ -243,6 +243,7 @@ class ClientDownloads {
 	 * Return a version to cap updates at for certain OS/version combinations
 	 */
 	private function getVersionOverride($channel, $os, $osVersion, $fromVersion, $manual) {
+		// Permanent OS-version caps
 		// TODO: Switch to real str_starts_with()
 		if ($this->str_starts_with($os, "win")) {
 			// Don't serve past 5.0.77 for Vista or earlier
@@ -262,7 +263,6 @@ class ClientDownloads {
 				return "6.0.37";
 			}
 
-			// TEMP? "Darwin%2018.2.0"
 			$osVersion = urldecode($osVersion);
 			list($_, $darwinVersion) = explode(' ', $osVersion);
 			list($darwinMajorVersion) = explode('.', $darwinVersion);
@@ -286,34 +286,80 @@ class ClientDownloads {
 			if (preg_match('/^[123456]\./', $fromVersion)) {
 				return "7.0.32";
 			}
+		}
 
-			if (preg_match('/^[7]\./', $fromVersion)) {
-				// TEMP: Remove to push Z8 to everyone
-				//return false;
-
-				// Serve 7.0.32 for automatic updates from Z7 for now
-				if ($manual) {
-					return false;
-				}
-
-				if (isset($GLOBALS['TEST_IPS']) && in_array($_SERVER['REMOTE_ADDR'], $GLOBALS['TEST_IPS'])) {
-					//return false;
-				}
-
-				// Staged rollout
-				/*$hash = hash('sha256', $_SERVER['REMOTE_ADDR'] . $_SERVER["HTTP_USER_AGENT"]);
-				$firstBytes = substr($hash, 0, 8); // First 4 bytes = 8 hex chars
-				$intVal = hexdec($firstBytes);
-				$maxVal = 0xFFFFFFFF;
-				$value = $intVal / $maxVal;
-				if ($value < 0.05) {
-					return false;
-				}*/
-
-				return "7.0.32";
+		// Config-based auto-update caps (from update-policy.json)
+		// Manual updates always get the latest version
+		if (!$manual) {
+			$cap = $this->getAutoUpdateCap($channel, $os, $fromVersion);
+			if ($cap) {
+				return $cap;
 			}
 		}
+
 		return false;
+	}
+
+
+	/**
+	 * Check update-policy.json for an auto-update cap for this channel/platform/version
+	 */
+	private function getAutoUpdateCap($channel, $os, $fromVersion) {
+		$policyFile = $this->manifestsDir . '/' . $channel . '/update-policy.json';
+		if (!file_exists($policyFile)) {
+			return false;
+		}
+
+		$policy = json_decode(file_get_contents($policyFile), true);
+		if (!$policy || !isset($policy['autoUpdateCap'])) {
+			return false;
+		}
+
+		// Get the major version number from the client's current version
+		if (preg_match('/^(\d+)\./', $fromVersion, $m)) {
+			$majorVersion = $m[1];
+		}
+		else {
+			return false;
+		}
+
+		$key = "from$majorVersion";
+		if (!isset($policy['autoUpdateCap'][$key])) {
+			return false;
+		}
+
+		$cap = $policy['autoUpdateCap'][$key];
+
+		// Get the short OS name (mac, win, linux)
+		$shortOS = preg_replace('/^(mac|win|linux).+/', "$1", $os);
+
+		// Get the version cap for this platform
+		if (is_string($cap)) {
+			$capVersion = $cap;
+		}
+		else if (is_array($cap) && isset($cap[$shortOS])) {
+			$capVersion = $cap[$shortOS];
+		}
+		else {
+			return false;
+		}
+
+		// If bypassPercent is set, allow that percentage of clients through
+		if (is_array($cap) && isset($cap['bypassPercent'])) {
+			$percent = (int) $cap['bypassPercent'];
+			if ($percent > 0
+					&& isset($_SERVER['REMOTE_ADDR'])
+					&& isset($_SERVER['HTTP_USER_AGENT'])) {
+				$hash = hash('sha256', $_SERVER['REMOTE_ADDR'] . $_SERVER['HTTP_USER_AGENT']);
+				$intVal = hexdec(substr($hash, 0, 8));
+				$value = $intVal / 0xFFFFFFFF * 100;
+				if ($value < $percent) {
+					return false;
+				}
+			}
+		}
+
+		return $capVersion;
 	}
 	
 	

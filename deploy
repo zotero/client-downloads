@@ -1,0 +1,120 @@
+#!/bin/bash
+#
+# Stage and deploy a previously built Zotero version
+#
+# Updates local manifest files to include the new version, then runs DEPLOY_CMD
+# (from config.inc.php) to push the changes live.
+#
+# Can be run locally on the server or remotely via SSH:
+#   ssh deploy.zotero /path/to/deploy release 9.0.1 mwl
+#
+set -euo pipefail
+
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+MANIFESTS_DIR="$SCRIPT_DIR/manifests"
+
+DEPLOY_CMD=$(php -r "require('$SCRIPT_DIR/config.inc.php'); echo \$DEPLOY_CMD;")
+
+function usage {
+	cat >&2 <<DONE
+Usage: $0 CHANNEL VERSION PLATFORMS
+  CHANNEL      Release channel ('release', 'beta', 'dev')
+  VERSION      Version number (e.g., '9.0.1', '9.0.1-beta.3+abc123')
+  PLATFORMS    Platforms to deploy (m=Mac, w=Windows, l=Linux)
+DONE
+	exit 1
+}
+
+CHANNEL="${1:-}"
+VERSION="${2:-}"
+PLATFORMS="${3:-}"
+
+if [[ -z "$CHANNEL" ]] || [[ -z "$VERSION" ]] || [[ -z "$PLATFORMS" ]]; then
+	usage
+fi
+
+CHANNEL_DIR="$MANIFESTS_DIR/$CHANNEL"
+VERSION_DIR="$CHANNEL_DIR/$VERSION"
+
+if [ ! -d "$VERSION_DIR" ]; then
+	echo "Error: $VERSION_DIR not found -- has the build been uploaded?" >&2
+	exit 1
+fi
+
+SHORT_VERSION="${VERSION:0:3}"
+
+# Stage: update local manifest files
+for i in `seq 0 1 $((${#PLATFORMS}-1))`
+do
+	case ${PLATFORMS:i:1} in
+		m)
+			os_name="mac"
+			architectures="mac"
+			;;
+		w)
+			os_name="win"
+			architectures="win32 win-x64 win-arm64"
+			;;
+		l)
+			os_name="linux"
+			architectures="linux-i686 linux-x86_64 linux-arm64"
+			;;
+		*)
+			echo "Invalid platform option: ${PLATFORMS:i:1}" >&2
+			usage
+			;;
+	esac
+
+	# Read build ID from build-{os}.json
+	build_json="$VERSION_DIR/build-${os_name}.json"
+	if [ ! -f "$build_json" ]; then
+		echo "Error: $build_json not found" >&2
+		exit 1
+	fi
+	BUILD_ID=$(python3 -c "import json; print(json.load(open('$build_json'))['buildID'])")
+
+	for arch in $architectures; do
+		jsonfile="$CHANNEL_DIR/updates-$arch.json"
+		if [ ! -f "$jsonfile" ]; then
+			echo "Error: $jsonfile not found" >&2
+			exit 1
+		fi
+
+		echo "Updating $jsonfile"
+
+		# Back up the file
+		cp "$jsonfile" "$jsonfile.bak"
+
+		# Add new version entry, keep last 5
+		python3 -c "
+import json, sys
+with open('$jsonfile') as f:
+    updates = json.load(f)
+updates.append({
+    'version': '$VERSION',
+    'buildID': '$BUILD_ID',
+    'detailsURL': 'https://www.zotero.org/support/${SHORT_VERSION}_changelog',
+    'major': None
+})
+updates = updates[-5:]
+with open('$jsonfile', 'w') as f:
+    json.dump(updates, f, indent=2)
+    f.write('\n')
+"
+	done
+
+	# Add version to incrementals list
+	incr_file="$CHANNEL_DIR/incrementals-$os_name"
+	echo "Adding $VERSION to $incr_file"
+	echo "$VERSION" >> "$incr_file"
+done
+
+# Deploy: push changes live
+if [ -n "${DEPLOY_CMD:-}" ]; then
+	echo
+	echo "Deploying..."
+	$DEPLOY_CMD
+fi
+
+echo
+echo "Deployed $VERSION on channel $CHANNEL for platforms $PLATFORMS"
