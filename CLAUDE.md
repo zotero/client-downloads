@@ -46,6 +46,7 @@ The `manifests/` directory contains per-channel (release, beta, dev) data:
 - `manifests/{channel}/{version}/files-{mac,win,linux}` -- MAR file listings with SHA-512 hashes and sizes. Uploaded by the build process.
 - `manifests/{channel}/{version}/build-{os}.json` -- Build ID and details URL per platform. Uploaded by the build process.
 - `manifests/{channel}/incrementals-{platform}` -- Lists of deployed versions used to generate incremental updates. Updated by the `deploy` script.
+- `manifests/{channel}/pinned-incrementals-{platform}` -- Versions that always get incremental MARs built, regardless of the normal incrementals window (e.g., last version of each major release).
 - `manifests/{channel}/update-policy.json` -- (optional) Auto-update caps by source major version. See "Update Policy" below.
 
 ## Deploy
