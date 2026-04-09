@@ -74,7 +74,8 @@ class ClientDownloads {
 				error_log("No builds found for $channel/$os");
 				return false;
 			}
-			$build = array_pop($builds);
+			// If the latest version is restricted, skip it for non-test IPs
+			$build = $this->getLatestAllowedBuild($channel, $builds);
 			if (!$build) {
 				error_log("Build not found for $channel/$os");
 			}
@@ -228,13 +229,7 @@ class ClientDownloads {
 	
 	public function getBuildVersion($channel, $platform) {
 		$builds = $this->getBuilds($channel, $platform);
-		// TEMP: Don't serve 8.0 yet
-		/*if ($channel == 'release' && (!isset($GLOBALS['TEST_IPS']) || !in_array($_SERVER['REMOTE_ADDR'], $GLOBALS['TEST_IPS']))) {
-			$builds = array_values(array_filter($builds, function ($build) {
-				return !$this->str_starts_with($build['version'], '8.');
-			}));
-		}*/
-		$build = array_pop($builds);
+		$build = $this->getLatestAllowedBuild($channel, $builds);
 		return $build ? $build['version'] : false;
 	}
 	
@@ -305,13 +300,8 @@ class ClientDownloads {
 	 * Check update-policy.json for an auto-update cap for this channel/platform/version
 	 */
 	private function getAutoUpdateCap($channel, $os, $fromVersion) {
-		$policyFile = $this->manifestsDir . '/' . $channel . '/update-policy.json';
-		if (!file_exists($policyFile)) {
-			return false;
-		}
-
-		$policy = json_decode(file_get_contents($policyFile), true);
-		if (!$policy || !isset($policy['autoUpdateCap'])) {
+		$policy = $this->getUpdatePolicy($channel);
+		if (!isset($policy['autoUpdateCap'])) {
 			return false;
 		}
 
@@ -361,8 +351,52 @@ class ClientDownloads {
 
 		return $capVersion;
 	}
-	
-	
+
+
+	/**
+	 * Get the latest build from the list, skipping restricted versions for non-test IPs
+	 */
+	private function getLatestAllowedBuild($channel, $builds) {
+		$policy = $this->getUpdatePolicy($channel);
+		$restrictedVersions = $policy['restrictedVersions'] ?? [];
+		$isTestIP = !empty($GLOBALS['TEST_IPS'])
+			&& isset($_SERVER['REMOTE_ADDR'])
+			&& in_array($_SERVER['REMOTE_ADDR'], $GLOBALS['TEST_IPS']);
+
+		while ($build = array_pop($builds)) {
+			if ($isTestIP || !$this->isVersionRestricted($build['version'], $restrictedVersions)) {
+				return $build;
+			}
+		}
+		return false;
+	}
+
+
+	/**
+	 * Check if a version matches any entry in the restricted versions list
+	 *
+	 * Entries can be exact versions ("9.0.1") or prefixes ("9.0") that match
+	 * any version starting with that prefix.
+	 */
+	private function isVersionRestricted($version, $restrictedVersions) {
+		foreach ($restrictedVersions as $restricted) {
+			if ($version === $restricted || $this->str_starts_with($version, $restricted . '.')) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+
+	private function getUpdatePolicy($channel) {
+		$policyFile = $this->manifestsDir . '/' . $channel . '/update-policy.json';
+		if (!file_exists($policyFile)) {
+			return [];
+		}
+		return json_decode(file_get_contents($policyFile), true) ?: [];
+	}
+
+
 	/**
 	 * Resolve a version string to full build data (version, buildID, detailsURL)
 	 *

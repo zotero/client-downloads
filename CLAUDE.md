@@ -72,7 +72,8 @@ It updates `updates-{platform}.json`, appends to `incrementals-{platform}`, and 
       "linux": "8.0.4",
       "bypassPercent": 5
     }
-  }
+  },
+  "restrictedVersions": ["9.0"]
 }
 ```
 
@@ -80,6 +81,7 @@ It updates `updates-{platform}.json`, appends to `incrementals-{platform}`, and 
 - Manual updates (`?force=1`) always bypass caps and get the latest version
 - `bypassPercent` -- (optional) Allow this percentage of auto-update clients through the cap
 - Remove an entry to uncap auto-updates for that major version
+- `restrictedVersions` -- Versions only served to test IPs (from `$TEST_IPS` in `config.inc.php`). Entries can be exact versions ("9.0.1") or prefixes ("9.0") matching any version starting with that prefix. Affects both downloads and updates.
 
 ## Configuration
 
