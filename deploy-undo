@@ -1,0 +1,92 @@
+#!/bin/bash
+#
+# Undo a deploy by restoring .bak manifest files, removing the version from
+# incrementals lists, and deleting the versioned directory.
+#
+set -euo pipefail
+
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+MANIFESTS_DIR="$SCRIPT_DIR/manifests"
+
+DEPLOY_CMD=$(php -r "require('$SCRIPT_DIR/config.inc.php'); echo \$DEPLOY_CMD;")
+
+function usage {
+	cat >&2 <<DONE
+Usage: $0 CHANNEL VERSION PLATFORMS
+  CHANNEL      Release channel ('release', 'beta', 'dev')
+  VERSION      Version number (e.g., '9.0.1', '9.0.1-beta.3+abc123')
+  PLATFORMS    Platforms to undo (m=Mac, w=Windows, l=Linux)
+DONE
+	exit 1
+}
+
+CHANNEL="${1:-}"
+VERSION="${2:-}"
+PLATFORMS="${3:-}"
+
+if [[ -z "$CHANNEL" ]] || [[ -z "$VERSION" ]] || [[ -z "$PLATFORMS" ]]; then
+	usage
+fi
+
+CHANNEL_DIR="$MANIFESTS_DIR/$CHANNEL"
+VERSION_DIR="$CHANNEL_DIR/$VERSION"
+
+# Restore .bak files and remove version from incrementals
+for i in `seq 0 1 $((${#PLATFORMS}-1))`
+do
+	case ${PLATFORMS:i:1} in
+		m)
+			os_name="mac"
+			architectures="mac"
+			;;
+		w)
+			os_name="win"
+			architectures="win32 win-x64 win-arm64"
+			;;
+		l)
+			os_name="linux"
+			architectures="linux-i686 linux-x86_64 linux-arm64"
+			;;
+		*)
+			echo "Invalid platform option: ${PLATFORMS:i:1}" >&2
+			usage
+			;;
+	esac
+
+	for arch in $architectures; do
+		bakfile="$CHANNEL_DIR/updates-$arch.json.bak"
+		jsonfile="$CHANNEL_DIR/updates-$arch.json"
+		if [ ! -f "$bakfile" ]; then
+			echo "Error: $bakfile not found -- nothing to restore" >&2
+			exit 1
+		fi
+
+		echo "Restoring $jsonfile from $bakfile"
+		mv "$bakfile" "$jsonfile"
+	done
+
+	# Remove version from incrementals list
+	incr_file="$CHANNEL_DIR/incrementals-$os_name"
+	if [ -f "$incr_file" ]; then
+		echo "Removing $VERSION from $incr_file"
+		# Use grep to filter out the exact version line
+		grep -vxF "$VERSION" "$incr_file" > "$incr_file.tmp" || true
+		mv "$incr_file.tmp" "$incr_file"
+	fi
+done
+
+# Delete versioned directory
+if [ -d "$VERSION_DIR" ]; then
+	echo "Deleting $VERSION_DIR"
+	rm -rf "$VERSION_DIR"
+fi
+
+# Deploy: push reverted changes live
+if [ -n "${DEPLOY_CMD:-}" ]; then
+	echo
+	echo "Deploying..."
+	$DEPLOY_CMD
+fi
+
+echo
+echo "Undid deploy of $VERSION on channel $CHANNEL for platforms $PLATFORMS"
