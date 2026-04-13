@@ -232,6 +232,11 @@ class ClientDownloads {
 		$build = $this->getLatestAllowedBuild($channel, $builds);
 		return $build ? $build['version'] : false;
 	}
+
+
+	public function getPlatforms() {
+		return array_values($this->platforms);
+	}
 	
 	
 	/**

@@ -4,10 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-This is the Zotero client download and update server (PHP). It handles two concerns:
+This is the Zotero client download and update server (PHP). It handles three concerns:
 
 1. **Download redirects** (`dl.php`) -- Redirects users to the correct installer file (DMG, EXE, tar.bz2/xz, ZIP) based on platform, channel, and version.
 2. **Update checks** (`update.php`) -- Serves Mozilla-style update XML responses so Zotero clients can check for and apply updates (full and incremental MARs).
+3. **Version checks** (`version.php`) -- Returns the latest available version for a channel/platform (or all platforms) without triggering download stats. Used by the download page and third-party packagers so they honor `restrictedVersions` gating instead of reading `updates-*.json` directly.
 
 ## Running Tests
 
