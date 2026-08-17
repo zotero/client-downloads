@@ -8,6 +8,9 @@
 # Can be run locally on the server or remotely via SSH:
 #   ssh deploy.zotero /path/to/deploy release 9.0.1 mwl
 #
+# With --stage-only, the manifests are updated but nothing is pushed, so the
+# tests can be run against the staged version before it goes live.
+#
 set -euo pipefail
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -17,13 +20,29 @@ DEPLOY_CMD=$(php -r "require('$SCRIPT_DIR/config.inc.php'); echo \$DEPLOY_CMD;")
 
 function usage {
 	cat >&2 <<DONE
-Usage: $0 CHANNEL VERSION PLATFORMS
-  CHANNEL      Release channel ('release', 'beta', 'dev')
-  VERSION      Version number (e.g., '9.0.1', '9.0.1-beta.3+abc123')
-  PLATFORMS    Platforms to deploy (m=Mac, w=Windows, l=Linux)
+Usage: $0 [--stage-only] CHANNEL VERSION PLATFORMS
+  --stage-only  Update the local manifests without pushing them live
+  CHANNEL       Release channel ('release', 'beta', 'dev')
+  VERSION       Version number (e.g., '9.0.1', '9.0.1-beta.3+abc123')
+  PLATFORMS     Platforms to deploy (m=Mac, w=Windows, l=Linux)
 DONE
 	exit 1
 }
+
+STAGE_ONLY=0
+
+while [[ "${1:-}" == -* ]]; do
+	case "$1" in
+		--stage-only)
+			STAGE_ONLY=1
+			shift
+			;;
+		*)
+			echo "Unknown option: $1" >&2
+			usage
+			;;
+	esac
+done
 
 CHANNEL="${1:-}"
 VERSION="${2:-}"
@@ -112,6 +131,15 @@ with open('$jsonfile', 'w') as f:
 	echo "Adding $VERSION to $incr_file"
 	echo "$VERSION" >> "$incr_file"
 done
+
+if [ "$STAGE_ONLY" -eq 1 ]; then
+	echo
+	echo "Staged $VERSION on channel $CHANNEL for platforms $PLATFORMS"
+	if [ -n "${DEPLOY_CMD:-}" ]; then
+		echo "Run '$DEPLOY_CMD' to push it live"
+	fi
+	exit 0
+fi
 
 # Deploy: push changes live
 if [ -n "${DEPLOY_CMD:-}" ]; then
