@@ -41,7 +41,11 @@ if [ ! -d "$VERSION_DIR" ]; then
 	exit 1
 fi
 
-SHORT_VERSION="${VERSION:0:3}"
+if [[ ! $VERSION =~ ^([0-9]+\.[0-9]+) ]]; then
+	echo "Error: couldn't parse major.minor version from '$VERSION'" >&2
+	exit 1
+fi
+SHORT_VERSION="${BASH_REMATCH[1]}"
 
 # Stage: update local manifest files
 for i in `seq 0 1 $((${#PLATFORMS}-1))`

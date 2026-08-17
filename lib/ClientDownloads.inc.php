@@ -130,7 +130,9 @@ class ClientDownloads {
 			// TEMP: Don't consider cross-major upgrades as major, since clients don't know how to prompt
 			//$isMinor = !strncmp($build["version"], $fromVersion, 3);
 			$isMinor = !strncmp($build["version"], $fromVersion, 2)
-				|| (preg_match('/^[789]\./', $fromVersion) && preg_match('/^[89]\./', $build["version"]));
+				|| (preg_match('/^(\d+)\./', $fromVersion, $fromMajor)
+					&& preg_match('/^(\d+)\./', $build["version"], $toMajor)
+					&& (int) $fromMajor[1] >= 7 && (int) $toMajor[1] >= 7);
 		}
 		$type = $isMinor ? "minor" : "major";
 		
