@@ -63,7 +63,8 @@ describe("Updates", function () {
 					url + '/7.0.12/20250219041724/Darwin_aarch64-gcc3/en-US/release/Darwin%2024.4.0/update.xml?force=1'
 				);
 				assert.lengthOf(result.updates.update, 1);
-				assert.notEqual(result.updates.update[0].$.appVersion, '7.0.32');
+				assert.propertyVal(result.updates.update[0].$, 'type', 'minor');
+				assert.equal(result.updates.update[0].$.appVersion, '10.0');
 			});
 
 			// Z8 users are capped for auto-updates (via update-policy.json)
@@ -92,6 +93,16 @@ describe("Updates", function () {
 				);
 				assert.lengthOf(result.updates.update, 1);
 				assert.propertyVal(result.updates.update[0].$, 'type', 'minor');
+				assert.equal(result.updates.update[0].$.appVersion, '10.0');
+			});
+
+			it("should offer latest update from 9.0 build with manual update", async function () {
+				var result = await req(
+					url + '/9.0.4/20260522110811/Darwin_aarch64-gcc3/en-US/release/Darwin%2024.4.0/update.xml?force=1'
+				);
+				assert.lengthOf(result.updates.update, 1);
+				assert.propertyVal(result.updates.update[0].$, 'type', 'minor');
+				assert.equal(result.updates.update[0].$.appVersion, '10.0');
 			});
 			
 			it("shouldn't show updates past 4.0.29.11 for 10.6-10.8 users", async function () {
@@ -199,6 +210,16 @@ describe("Updates", function () {
 				);
 				assert.lengthOf(result.updates.update, 1);
 				assert.propertyVal(result.updates.update[0].$, 'type', 'minor');
+				assert.equal(result.updates.update[0].$.appVersion, '10.0');
+			});
+
+			it("should offer latest update from 9.0 build with manual update", async function () {
+				var result = await req(
+					url + '/9.0.4/20260522110811/WINNT_x86_64-msvc-x64/en-US/release/Windows_NT%2010.0.0.0.26100.3775%20(x64)/update.xml?force=1'
+				);
+				assert.lengthOf(result.updates.update, 1);
+				assert.propertyVal(result.updates.update[0].$, 'type', 'minor');
+				assert.equal(result.updates.update[0].$.appVersion, '10.0');
 			});
 			
 			it("should offer minor update to 5.0.77 for Zotero 5 on Windows XP", async function () {

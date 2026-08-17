@@ -27,39 +27,39 @@ describe("Downloads", function () {
 	};
 	
 	describe("release channel", function () {
-		it("should offer 8.0 for Mac by default", async function () {
+		it("should offer 10.0 for Mac by default", async function () {
 			var result = await req(
 				url + '?channel=release&platform=mac'
 			);
-			assert.match(result, /client\/release\/8\.0(\.[\d]+)?\/Zotero-8.0(\.[\d]+)?\.dmg$/);
+			assert.match(result, /client\/release\/10\.0(\.[\d]+)?\/Zotero-10\.0(\.[\d]+)?\.dmg$/);
 		});
 		
-		it("should offer 8.0 for Windows x64 by default", async function () {
+		it("should offer 10.0 for Windows x64 by default", async function () {
 			var result = await req(
 				url + '?channel=release&platform=win-x64'
 			);
-			assert.match(result, /client\/release\/8\.0(\.[\d]+)?\/Zotero-8.0(\.[\d]+)?_x64_setup.exe$/);
+			assert.match(result, /client\/release\/10\.0(\.[\d]+)?\/Zotero-10\.0(\.[\d]+)?_x64_setup.exe$/);
 		});
 		
-		it("should offer 8.0 for Windows arm64 by default", async function () {
+		it("should offer 10.0 for Windows arm64 by default", async function () {
 			var result = await req(
 				url + '?channel=release&platform=win-arm64'
 			);
-			assert.match(result, /client\/release\/8\.0(\.[\d]+)?\/Zotero-8.0(\.[\d]+)?_arm64_setup.exe$/);
+			assert.match(result, /client\/release\/10\.0(\.[\d]+)?\/Zotero-10\.0(\.[\d]+)?_arm64_setup.exe$/);
 		});
 		
-		it("should offer 8.0 for Windows x86 by default", async function () {
+		it("should offer 10.0 for Windows x86 by default", async function () {
 			var result = await req(
 				url + '?channel=release&platform=win32'
 			);
-			assert.match(result, /client\/release\/8\.0(\.[\d]+)?\/Zotero-8.0(\.[\d]+)?_win32_setup.exe$/);
+			assert.match(result, /client\/release\/10\.0(\.[\d]+)?\/Zotero-10\.0(\.[\d]+)?_win32_setup.exe$/);
 		});
 		
-		it("should offer 8.0 for Linux x86_64 by default", async function () {
+		it("should offer 10.0 for Linux x86_64 by default", async function () {
 			var result = await req(
 				url + '?channel=release&platform=linux-x86_64'
 			);
-			assert.match(result, /client\/release\/8\.0(\.[\d]+)?\/Zotero-8\.0(\.[\d]+)?_linux-x86_64.tar.xz$/);
+			assert.match(result, /client\/release\/10\.0(\.[\d]+)?\/Zotero-10\.0(\.[\d]+)?_linux-x86_64.tar.xz$/);
 		});
 		
 		it("should offer setup.exe for win32 5.0.77", async function () {

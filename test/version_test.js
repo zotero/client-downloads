@@ -10,7 +10,7 @@ describe("Version", function () {
 		});
 		assert.equal(res.statusCode, 200);
 		assert.match(res.headers['content-type'], /^text\/plain/);
-		assert.match(res.body, /^8\.0(\.[\d]+)?$/);
+		assert.match(res.body, /^10\.0(\.[\d]+)?$/);
 	});
 
 	it("should return all platforms as JSON when no platform given", async function () {
@@ -21,8 +21,8 @@ describe("Version", function () {
 		assert.equal(res.statusCode, 200);
 		assert.match(res.headers['content-type'], /^application\/json/);
 		var body = JSON.parse(res.body);
-		assert.match(body.mac, /^8\.0(\.[\d]+)?$/);
-		assert.match(body['win-x64'], /^8\.0(\.[\d]+)?$/);
-		assert.match(body['linux-x86_64'], /^8\.0(\.[\d]+)?$/);
+		assert.match(body.mac, /^10\.0(\.[\d]+)?$/);
+		assert.match(body['win-x64'], /^10\.0(\.[\d]+)?$/);
+		assert.match(body['linux-x86_64'], /^10\.0(\.[\d]+)?$/);
 	});
 });
