@@ -65,6 +65,7 @@ if [[ ! $VERSION =~ ^([0-9]+\.[0-9]+) ]]; then
 	exit 1
 fi
 SHORT_VERSION="${BASH_REMATCH[1]}"
+MAJOR_VERSION="${SHORT_VERSION%%.*}"
 
 # Stage: update local manifest files
 for i in `seq 0 1 $((${#PLATFORMS}-1))`
@@ -87,6 +88,11 @@ do
 			usage
 			;;
 	esac
+
+	# Linux 32-bit builds were discontinued in Zotero 11 (Firefox 153)
+	if [ "$MAJOR_VERSION" -ge 11 ]; then
+		architectures=$(echo $architectures | tr ' ' '\n' | grep -v -x linux-i686 | tr '\n' ' ')
+	fi
 
 	# Read build ID from build-{os}.json
 	build_json="$VERSION_DIR/build-${os_name}.json"
