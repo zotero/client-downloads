@@ -114,7 +114,8 @@ do
 		# Back up the file
 		cp "$jsonfile" "$jsonfile.bak"
 
-		# Add new version entry, keep last 5
+		# Add new version entry, keep last 5 plus the latest of each major (for auto-update caps
+		# that resolve to the latest build of a major)
 		python3 -c "
 import json, sys
 with open('$jsonfile') as f:
@@ -125,7 +126,11 @@ updates.append({
     'detailsURL': 'https://www.zotero.org/support/${SHORT_VERSION}_changelog',
     'major': None
 })
-updates = updates[-5:]
+latest_of_major = {}
+for i, u in enumerate(updates):
+    latest_of_major[u['version'].split('.')[0]] = i
+keep = set(range(max(len(updates) - 5, 0), len(updates))) | set(latest_of_major.values())
+updates = [u for i, u in enumerate(updates) if i in keep]
 with open('$jsonfile', 'w') as f:
     json.dump(updates, f, indent=2)
     f.write('\n')

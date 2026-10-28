@@ -43,7 +43,7 @@ The `test/run_tests` script starts `php -S localhost:12562`, runs mocha, and tea
 
 The `manifests/` directory contains per-channel (release, beta, dev) data:
 
-- `manifests/{channel}/updates-{platform}.json` -- JSON arrays of available builds (version, buildID, detailsURL). Updated by the `deploy` script.
+- `manifests/{channel}/updates-{platform}.json` -- JSON arrays of available builds (version, buildID, detailsURL). Updated by the `deploy` script, which keeps the last 5 builds plus the latest build of each major. The latest build is determined by version, not position, so a point release of an earlier major can be deployed after a later major.
 - `manifests/{channel}/{version}/files-{mac,win,linux}` -- MAR file listings with SHA-512 hashes and sizes. Uploaded by the build process.
 - `manifests/{channel}/{version}/build-{os}.json` -- Build ID and details URL per platform. Uploaded by the build process.
 - `manifests/{channel}/incrementals-{platform}` -- Lists of deployed versions used to generate incremental updates. Updated by the `deploy` script.
@@ -83,6 +83,7 @@ It updates `updates-{platform}.json`, appends to `incrementals-{platform}`, and 
 ```
 
 - Top-level platform keys -- Caps auto-updates at the specified version per platform for all clients whose major version is at or below the cap's major version (e.g., a 10.0.8 cap applies to 7.x–10.x clients but not 11.x)
+- Cap values can be a full version ("10.0.8") or a bare major version ("10"). A bare major resolves to the latest allowed build of that major in `updates-{platform}.json`, so point releases of the previous major deployed during a rollout are picked up automatically. If no build of that major is found, no update is served.
 - `from{N}` -- (optional) Overrides the top-level cap for clients on major version N
 - Manual updates (`?force=1`) always bypass caps and get the latest version
 - `bypassPercent` -- (optional) Allow this percentage of auto-update clients through the cap. 100 uncaps everyone, so a full release can leave the cap in place.

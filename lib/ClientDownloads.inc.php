@@ -312,6 +312,9 @@ class ClientDownloads {
 	 * A top-level cap (platform keys and optional bypassPercent directly under autoUpdateCap)
 	 * applies to clients whose major version is at or below the cap's major version. A
 	 * from{N} entry overrides it for clients on major version N.
+	 *
+	 * A cap can be a full version ("10.0.8") or a bare major version ("10"), which resolves
+	 * to the latest allowed build of that major for the platform.
 	 */
 	private function getAutoUpdateCap($channel, $os, $fromVersion) {
 		$policy = $this->getUpdatePolicy($channel);
@@ -357,7 +360,7 @@ class ClientDownloads {
 
 		// Don't apply the top-level cap to clients already past the capped major version
 		if ($isTopLevel
-				&& (!preg_match('/^(\d+)\./', $capVersion, $m) || $majorVersion > $m[1])) {
+				&& (!preg_match('/^(\d+)(\.|$)/', $capVersion, $m) || $majorVersion > $m[1])) {
 			return false;
 		}
 
@@ -379,6 +382,21 @@ class ClientDownloads {
 			}
 		}
 
+		// Resolve a bare major version to the latest build of that major
+		if (preg_match('/^\d+$/', $capVersion)) {
+			$builds = $this->getBuilds($channel, $os) ?: [];
+			$builds = array_values(array_filter($builds, function ($build) use ($capVersion) {
+				return $this->str_starts_with($build['version'], $capVersion . '.');
+			}));
+			$build = $this->getLatestAllowedBuild($channel, $builds);
+			if (!$build) {
+				// Leave unresolved so that no update is served rather than an uncapped one
+				error_log("No $capVersion.x build found for auto-update cap on $channel/$os");
+				return $capVersion;
+			}
+			return $build['version'];
+		}
+
 		return $capVersion;
 	}
 
@@ -392,6 +410,12 @@ class ClientDownloads {
 		$isTestIP = !empty($GLOBALS['TEST_IPS'])
 			&& isset($_SERVER['REMOTE_ADDR'])
 			&& in_array($_SERVER['REMOTE_ADDR'], $GLOBALS['TEST_IPS']);
+
+		// Sort by version, since a point release of an earlier major can be deployed after a
+		// later major
+		usort($builds, function ($a, $b) {
+			return \ToolkitVersionComparator::compare($a['version'], $b['version']);
+		});
 
 		while ($build = array_pop($builds)) {
 			if ($isTestIP || !$this->isVersionRestricted($build['version'], $restrictedVersions)) {
