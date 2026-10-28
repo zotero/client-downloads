@@ -297,31 +297,31 @@ describe("Updates", function () {
 	
 	describe("beta channel", function () {
 		describe("Mac", function () {
-			it("should offer minor update to 10.0 beta from 7.0 build", async function () {
+			it("should offer minor update to 11.0 beta from 7.0 build", async function () {
 				var result = await req(
 					url + '/7.0.0-beta.1%2Baaaaaaaaa/20230501021418/Darwin_x86_64-gcc3/en-US/beta/Darwin%2022.4.0/update.xml'
 				);
 				assert.lengthOf(result.updates.update, 1);
 				assert.propertyVal(result.updates.update[0].$, 'type', 'minor');
-				assert.match(result.updates.update[0].$.appVersion, /^10\.\d+(\.\d+)?-beta\.\d+\+\w+$/);
+				assert.match(result.updates.update[0].$.appVersion, /^11\.\d+(\.\d+)?-beta\.\d+\+\w+$/);
 			});
 
-			it("should offer minor update to 10.0 beta from 7.1 build", async function () {
+			it("should offer minor update to 11.0 beta from 7.1 build", async function () {
 				var result = await req(
 					url + '/7.1-beta.1%2Baaaaaaaaa/20230501021418/Darwin_x86_64-gcc3/en-US/beta/Darwin%2022.4.0/update.xml'
 				);
 				assert.lengthOf(result.updates.update, 1);
 				assert.propertyVal(result.updates.update[0].$, 'type', 'minor');
-				assert.match(result.updates.update[0].$.appVersion, /^10\.\d+(\.\d+)?-beta\.\d+\+\w+$/);
+				assert.match(result.updates.update[0].$.appVersion, /^11\.\d+(\.\d+)?-beta\.\d+\+\w+$/);
 			});
 
-			it("should offer minor update to 10.0 beta from earlier 8.0 build", async function () {
+			it("should offer minor update to 11.0 beta from earlier 8.0 build", async function () {
 				var result = await req(
 					url + '/8.0-beta.1%2Baaaaaaaaa/20230501021418/Darwin_x86_64-gcc3/en-US/beta/Darwin%2022.4.0/update.xml'
 				);
 				assert.lengthOf(result.updates.update, 1);
 				assert.propertyVal(result.updates.update[0].$, 'type', 'minor');
-				assert.match(result.updates.update[0].$.appVersion, /^10\.\d+(\.\d+)?-beta\.\d+\+\w+$/);
+				assert.match(result.updates.update[0].$.appVersion, /^11\.\d+(\.\d+)?-beta\.\d+\+\w+$/);
 			});
 
 			it("shouldn't show updates past Zotero 7.1 for 10.14 users", async function () {
@@ -335,7 +335,7 @@ describe("Updates", function () {
 				assert.lengthOf(result.updates, 0);
 			});
 
-			it("should show updates to 10.0 beta for 10.15 users", async function () {
+			it("should show updates to 11.0 beta for 10.15 users", async function () {
 				var xml = await rp({
 					uri: url + '/7.1-beta.48%2B735922a2b/20250724122241/Darwin_aarch64-gcc3/en-US/beta/Darwin%252019.0.0/update.xml?force=1',
 					headers: {
@@ -345,38 +345,38 @@ describe("Updates", function () {
 				var result = await parseXML(xml);
 				assert.lengthOf(result.updates.update, 1);
 				assert.propertyVal(result.updates.update[0].$, 'type', 'minor');
-				assert.match(result.updates.update[0].$.appVersion, /^10\.\d+(\.\d+)?-beta\.\d+\+\w+$/);
+				assert.match(result.updates.update[0].$.appVersion, /^11\.\d+(\.\d+)?-beta\.\d+\+\w+$/);
 			});
 		});
 
 		describe("Windows 64-bit", function () {
-			it("should offer minor update to 10.0 beta from 7.0 build", async function () {
+			it("should offer minor update to 11.0 beta from 7.0 build", async function () {
 				var result = await req(
 					url + '/7.0.0-beta.1%2Baaaaaaaa/20230304083433/WINNT_x86_64-msvc-x64/en-US/beta/Windows_NT%2010.0.0.0.22000.1574%20(x64)/update.xml'
 				);
 				assert.lengthOf(result.updates.update, 1);
 				assert.propertyVal(result.updates.update[0].$, 'type', 'minor');
-				assert.match(result.updates.update[0].$.appVersion, /^10\.\d+(\.\d+)?-beta\.\d+\+\w+$/);
+				assert.match(result.updates.update[0].$.appVersion, /^11\.\d+(\.\d+)?-beta\.\d+\+\w+$/);
 			});
 
-			it("should offer minor update to 10.0 beta from earlier 8.0 build", async function () {
+			it("should offer minor update to 11.0 beta from earlier 8.0 build", async function () {
 				var result = await req(
 					url + '/8.0-beta.1%2Baaaaaaaa/20230304083433/WINNT_x86_64-msvc-x64/en-US/beta/Windows_NT%2010.0.0.0.22000.1574%20(x64)/update.xml'
 				);
 				assert.lengthOf(result.updates.update, 1);
 				assert.propertyVal(result.updates.update[0].$, 'type', 'minor');
-				assert.match(result.updates.update[0].$.appVersion, /^10\.\d+(\.\d+)?-beta\.\d+\+\w+$/);
+				assert.match(result.updates.update[0].$.appVersion, /^11\.\d+(\.\d+)?-beta\.\d+\+\w+$/);
 			});
 		});
 
 		describe("Windows 32-bit", function () {
-			it("should offer minor update to 10.0 beta from earlier 8.0 build", async function () {
+			it("should offer minor update to 11.0 beta from earlier 8.0 build", async function () {
 				var result = await req(
 					url + '/8.0-beta.1%2Baaaaaaaa/20170521060737/WINNT_x86-msvc-x64/en-US/beta/Windows_NT%2010.0.0.0%20(x64)/update.xml'
 				);
 				assert.lengthOf(result.updates.update, 1);
 				assert.propertyVal(result.updates.update[0].$, 'type', 'minor');
-				assert.match(result.updates.update[0].$.appVersion, /^10\.\d+(\.\d+)?-beta\.\d+\+\w+$/);
+				assert.match(result.updates.update[0].$.appVersion, /^11\.\d+(\.\d+)?-beta\.\d+\+\w+$/);
 			});
 		});
 	});

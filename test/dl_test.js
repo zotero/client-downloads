@@ -72,20 +72,20 @@ describe("Downloads", function () {
 	
 	describe("beta channel", function () {
 		describe("Windows 64-bit", function () {
-			it("should offer 10.0 beta installer by default", async function () {
+			it("should offer 11.0 beta installer by default", async function () {
 				var result = await req(
 					url + '?channel=beta&platform=win-x64'
 				);
-				assert.match(result, /client\/beta\/10\.[^/]+-beta\.[^/]+\/Zotero-10\.[^/]+-beta\.[^/]+_x64_setup\.exe$/);
+				assert.match(result, /client\/beta\/11\.[^/]+-beta\.[^/]+\/Zotero-11\.[^/]+-beta\.[^/]+_x64_setup\.exe$/);
 			});
 		});
 
 		describe("Windows 32-bit", function () {
-			it("should offer 10.0 beta installer by default", async function () {
+			it("should offer 11.0 beta installer by default", async function () {
 				var result = await req(
 					url + '?channel=beta&platform=win32'
 				);
-				assert.match(result, /client\/beta\/10\.[^/]+-beta\.[^/]+\/Zotero-10\.[^/]+-beta\.[^/]+_win32_setup\.exe$/);
+				assert.match(result, /client\/beta\/11\.[^/]+-beta\.[^/]+\/Zotero-11\.[^/]+-beta\.[^/]+_win32_setup\.exe$/);
 			});
 			
 			it("should offer setup.exe for 5.0.77", async function () {
