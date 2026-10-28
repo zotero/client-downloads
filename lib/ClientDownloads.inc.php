@@ -308,6 +308,10 @@ class ClientDownloads {
 
 	/**
 	 * Check update-policy.json for an auto-update cap for this channel/platform/version
+	 *
+	 * A top-level cap (platform keys and optional bypassPercent directly under autoUpdateCap)
+	 * applies to clients whose major version is at or below the cap's major version. A
+	 * from{N} entry overrides it for clients on major version N.
 	 */
 	private function getAutoUpdateCap($channel, $os, $fromVersion) {
 		$policy = $this->getUpdatePolicy($channel);
@@ -323,15 +327,22 @@ class ClientDownloads {
 			return false;
 		}
 
-		$key = "from$majorVersion";
-		if (!isset($policy['autoUpdateCap'][$key])) {
-			return false;
-		}
-
-		$cap = $policy['autoUpdateCap'][$key];
-
 		// Get the short OS name (mac, win, linux)
 		$shortOS = preg_replace('/^(mac|win|linux).+/', "$1", $os);
+
+		// Use the from{N} entry for this major version if there is one, or else the top-level cap
+		$key = "from$majorVersion";
+		$isTopLevel = false;
+		if (isset($policy['autoUpdateCap'][$key])) {
+			$cap = $policy['autoUpdateCap'][$key];
+		}
+		else if (isset($policy['autoUpdateCap'][$shortOS])) {
+			$cap = $policy['autoUpdateCap'];
+			$isTopLevel = true;
+		}
+		else {
+			return false;
+		}
 
 		// Get the version cap for this platform
 		if (is_string($cap)) {
@@ -344,9 +355,18 @@ class ClientDownloads {
 			return false;
 		}
 
+		// Don't apply the top-level cap to clients already past the capped major version
+		if ($isTopLevel
+				&& (!preg_match('/^(\d+)\./', $capVersion, $m) || $majorVersion > $m[1])) {
+			return false;
+		}
+
 		// If bypassPercent is set, allow that percentage of clients through
 		if (is_array($cap) && isset($cap['bypassPercent'])) {
 			$percent = (int) $cap['bypassPercent'];
+			if ($percent >= 100) {
+				return false;
+			}
 			if ($percent > 0
 					&& isset($_SERVER['REMOTE_ADDR'])
 					&& isset($_SERVER['HTTP_USER_AGENT'])) {

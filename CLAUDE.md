@@ -68,21 +68,25 @@ It updates `updates-{platform}.json`, appends to `incrementals-{platform}`, and 
 ```json
 {
   "autoUpdateCap": {
-    "from8": {
-      "mac": "8.0.5",
-      "win": "8.0.4",
-      "linux": "8.0.4",
-      "bypassPercent": 5
+    "mac": "10.0.8",
+    "win": "10.0.8",
+    "linux": "10.0.8",
+    "bypassPercent": 5,
+    "from7": {
+      "mac": "7.0.32",
+      "win": "7.0.32",
+      "linux": "7.0.32"
     }
   },
-  "restrictedVersions": ["9.0"]
+  "restrictedVersions": ["11.0"]
 }
 ```
 
-- `from{N}` -- Caps auto-updates for clients on major version N to the specified version per platform
+- Top-level platform keys -- Caps auto-updates at the specified version per platform for all clients whose major version is at or below the cap's major version (e.g., a 10.0.8 cap applies to 7.x–10.x clients but not 11.x)
+- `from{N}` -- (optional) Overrides the top-level cap for clients on major version N
 - Manual updates (`?force=1`) always bypass caps and get the latest version
-- `bypassPercent` -- (optional) Allow this percentage of auto-update clients through the cap
-- Remove an entry to uncap auto-updates for that major version
+- `bypassPercent` -- (optional) Allow this percentage of auto-update clients through the cap. 100 uncaps everyone, so a full release can leave the cap in place.
+- Remove a cap to uncap auto-updates (removing a `from{N}` entry falls back to the top-level cap)
 - `restrictedVersions` -- Versions only served to test IPs (from `$TEST_IPS` in `config.inc.php`). Entries can be exact versions ("9.0.1") or prefixes ("9.0") matching any version starting with that prefix. Affects both downloads and updates.
 
 ## Configuration
